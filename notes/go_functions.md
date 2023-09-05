@@ -393,6 +393,164 @@ func main() {
 }
 ```
 
+## Receiver Functions (Type Methods)
+
+A `Receiver Function` (a.k.a. `method`) is a function associated with a type.
+
+- `Receiver Function`s allow you to associate behavior or functionality with a custom-defined type
+- This is similar to methods in object-oriented programming languages
+
+There are two types of receiver functions
+
+- `Pointer Receivers` - Can modify a struct (accept and work with pointers to the struct)
+- `Value Receivers` - Can't modify a struct (since they accept structs as values)
+- Use of `Pointer Receivers` is more common than `Value Receivers`
+
+```go
+func (r ReceiverType) FunctionName(parameters) returnType {
+    // Function body
+}
+
+// r is variable used to reference the type instance in func body
+// ReceiverType - Type that method is associated with
+//  ReceiverType can optionally be a Pointer (*ReceiverType)
+// FunctionName - Name of the method
+// parameters   - Input parameters for the method
+// returnType   - type that the method returns
+```
+
+Example of receiver function (Value Receiver):
+
+```go
+package main
+
+import "fmt"
+
+type Person struct {
+    FirstName string
+    LastName  string
+}
+
+// Receiver function associated with the Person type
+func (p Person) GetFullName() string {
+    return p.FirstName + " " + p.LastName
+}
+
+func main() {
+    person := Person{"John", "Doe"}
+    fullName := person.GetFullName()
+    fmt.Println(fullName) // Output: John Doe
+}
+```
+
+Example of Regular Function:
+
+```go
+type Coordinate struct {
+    X, Y int
+}
+
+func shiftBy(x, y int, coord *Coordinate) {
+    coord.X += x
+    coord.Y += y
+}
+
+coord := Coordinate{5, 5}
+shiftBy(1, 1, &coord) // (6, 6)
+```
+
+Same Function using Receiver Function (Pointer Receiver):
+
+```go
+type Coordinate struct {
+    X, Y int
+}
+
+// Define receiver function for Coordinate type
+// This function is invoked using dot notation
+// by an instance of the Coordinate type
+// NOTE that we pass in a pointer to Coordinate in this example
+func (coord *Coordinate) shiftBy(x, y int) {
+    coord.X += x
+    coord.Y += y
+}
+
+coord := Coordinate{5, 5}
+
+// Instead of passing in Coordinate pointer into function,
+// we use dot notation on the Coordinate instance (coord)
+// to invoke the shiftBy function
+coord.shiftBy(1, 1) // (6, 6)
+```
+
+Additional Receiver Function (Value Receiver):
+
+```go
+type Coordinate struct {
+    X, Y int
+}
+
+// This receiver function does not reference a pointer to Coordinate
+// So a copy of the Coordinate type is passed to the function
+// Therefore, need to return the coordinate
+func (a Coordinate) ShiftDist(b Coordinate) Coordinate {
+    return Coordinate{b.X - a.X, b.Y - a.Y}
+}
+
+firstCoord := Coordinate{2, 2}
+secondCoord := Coordinate{1, 5}
+
+// Use dot-notation to invoke ShiftDist method
+// on Coordinate Type instance (firstCoord)
+distance := firstCoord.ShiftDist(secondCoord) // {-1 3}
+```
+
+```go
+package main
+
+import "fmt"
+
+type Player struct {
+	health int
+}
+
+// Define a Receiver Function (Pointer Receiver)
+// This Receiver function references an instance of the Player struct via a pointer
+// Any variable of type Player can invoke this method using dot-notation
+func (player *Player) takeDamage(dmg int) {
+	fmt.Println("Player is taking damage...", -dmg)
+	player.health -= dmg
+	fmt.Println("Player's current health:", player.health)
+}
+
+// This "regular" function works the same way as the takeDamage receiver function
+// except instead of using dot-notation, you have to invoke the function
+// and pass in a reference to the Player type variable
+func takeDamage(player *Player, dmg int) {
+	fmt.Println("Player is taking damage...", -dmg)
+	player.health -= dmg
+	fmt.Println("Player's current health:", player.health)
+}
+
+func main() {
+	// Instantiate a Player struct
+	player := Player{health: 100}
+	fmt.Println("Player's starting health:", player.health)
+
+	// Invoke the receiver function on the player struct
+	// NOTE that we use dot-notation to invoke the takeDamage receiver function (method)
+	// The receiver function is invoked by the player struct (Player type)
+	player.takeDamage(50) // Player health after function invocation is 50
+
+	// Invoke the takeDamage function (regular) and pass in a reference
+	// to the player struct via a pointer
+	takeDamage(&player, 50) // Player health after function invocation is 0
+}
+
+```
+
 ## Resources / References
 
 - [codecademy - functions](https://www.codecademy.com/resources/docs/go/functions)
+- [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
+- [Anthony GG - Everythin You Need To Know About Pointers in Golang](https://www.youtube.com/watch?v=mqH21m0MsWk&list=PL0xRBLFXXsP7-0IVCmoo2FEWBrQzfH2l8&index=7)
