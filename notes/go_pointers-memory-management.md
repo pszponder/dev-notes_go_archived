@@ -15,6 +15,12 @@ Pointers are variables that point to locations in memory
 - The value of a pointer variable is a memory address
 - To access and manipulate the actual value referenced by the pointer, you have to `dereference` the pointer
 
+### When to Use Pointers?
+
+Recall that functions copy data passed into them. If you are passing large amounts of data, it is inefficient and resource intensive to do so.
+
+Use pointers when you are working with large amounts of data to avoid copying the data in your functions.
+
 ## Creating Pointers
 
 `*` (Dereferencing Operator)
@@ -136,3 +142,4 @@ if ptr == nil {
 ## Resources / References
 
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
+- [Anthony GG - Everything You Need To Know About Pointers in Golang](https://www.youtube.com/watch?v=mqH21m0MsWk&list=PL0xRBLFXXsP7-0IVCmoo2FEWBrQzfH2l8&index=7)
