@@ -275,11 +275,12 @@ func main() {
 `Variadic functions` accept a variable number of arguments of the same type.
 
 - The `...` ellipsis syntax is used to indicate that a function parameter is variadic.
-- The variadic parameter is a [collection](go_data-types_collections.md)
+- The variadic parameter is collected into a [slice](go_data-types_slices.md)
 
 ```go
 // r1, ...rN = return1, ...returnN
 // rT1, ...rTN = returnType1, ...returnTypeN
+// keys is a slice of type keysType
 
 func(keys ...keysType) (r1 rT1, r2 rT2, ...rN rTN) {
   // function body
@@ -292,6 +293,7 @@ package main
 import "fmt"
 
 // Variadic function that calculates the sum of integers
+// numbers becomes a slice of int type
 func sum(numbers ...int) int {
     total := 0
 
@@ -309,9 +311,14 @@ func main() {
     result2 := sum(10, 20, 30, 40, 50)
     result3 := sum()
 
+    // Use a slice and deconstruct variables in function
+    numbers := []int{1, 2, 3, 4}
+    result4 := sum(numbers...)
+
     fmt.Println("Result 1:", result1) // Result 1: 6
     fmt.Println("Result 2:", result2) // Result 2: 150
     fmt.Println("Result 3:", result3) // Result 3: 0
+    fmt.Println("Result 4:", result4) // Result 4: 10
 }
 ```
 
