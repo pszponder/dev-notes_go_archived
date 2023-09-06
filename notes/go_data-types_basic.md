@@ -77,11 +77,11 @@ firstName := "Bilbo"
 lastName := "Baggins"
 age := 100
 
-// Examples of Printf
+// Examples of Printf (these are printed to the console)
 fmt.Printf("Hello World!\n")
 fmt.Printf("Name: %s %s, Age: %d\n", firstName, lastName, age)
 
-// Examples of Sprintf
+// Examples of Sprintf (used to create new strings)
 formattedString := fmt.Sprintf("Name: %s %s, Age: %d\n", firstName, lastName, age)
 ```
 
