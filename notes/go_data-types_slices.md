@@ -199,6 +199,40 @@ sliceStart := originalSlice[:4] // [1 2 3 4]
 sliceEnd := originalSlice[5:] // [6 7 8 9 10]
 ```
 
+## Unpacking Slices into individual elements
+
+You can use `...` at the end of a slice to unpack the slice into its individual elements.
+
+- This is used when unpacking elements of a slice into a function
+- When creating custom [variadic functions](go_functions.md#variable-number-of-parameters-w-variadic-functions), you can destructure slices into their individual elements and pass them into the variadic function
+
+```go
+package main
+
+import "fmt"
+
+// sumNumbers calculates the sum of an arbitrary number of integers.
+// This is a "variadic" function
+func sumNumbers(numbers ...int) int {
+    sum := 0
+    for _, num := range numbers {
+        sum += num
+    }
+    return sum
+}
+
+func main() {
+    // Create a slice of numbers
+    numbers := []int{1, 2, 3, 4, 5}
+
+    // Use ... to unpack the slice elements and pass them as separate arguments
+    result := sumNumbers(numbers...)
+
+    // Display the result
+    fmt.Printf("Result: %d\n", result)
+}
+```
+
 ## Concatenating Slices
 
 Use the `append` method to append slices together
