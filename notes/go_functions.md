@@ -553,11 +553,49 @@ func main() {
 	// to the player struct via a pointer
 	takeDamage(&player, 50) // Player health after function invocation is 0
 }
+```
 
+## init function
+
+The `init` function is a special function that can be defined in a Go [package](go_packages.md).
+
+The primary purpose of the `init` function is to perform any package-level initialization that is required before the program starts executing.
+
+- **CAUTION:** The `init` function is not meant for general program logic, but rather for package-level setup.
+
+`init` function key points:
+
+- **Initialization Order:**
+  - If a package contains an `init` function, Go ensures that it is called before the `main` function of the package or any other functions within that package.
+  - The `init` function is executed only once, regardless of how many times the package is imported.
+- **Multiple `init` functions:**
+  - A package can contain multiple `init` functions, and they will be executed in the order in which they are declared.
+  - The order in which `init` functions from different packages are executed is not guaranteed.
+- **No parameters or return values:**
+  - The `init` function has no parameters, and it doesn't return any values.
+  - The `init` function cannot be called explicitly by your code; Go's runtime system automatically calls it.
+- **Common Use Cases:**
+  - Setting up global variables
+  - Initializing data structures
+  - Configuring Settings
+  - Performing one-time setup operations for a package
+
+```go
+package mypackage
+
+import "fmt"
+
+var importantData int
+
+func init() {
+    // This code will run once when the package is imported
+    importantData = 42
+    fmt.Println("Initializing importantData in mypackage")
+}
 ```
 
 ## Resources / References
 
 - [codecademy - functions](https://www.codecademy.com/resources/docs/go/functions)
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
-- [Anthony GG - Everythin You Need To Know About Pointers in Golang](https://www.youtube.com/watch?v=mqH21m0MsWk&list=PL0xRBLFXXsP7-0IVCmoo2FEWBrQzfH2l8&index=7)
+- [Anthony GG - Everything You Need To Know About Pointers in Golang](https://www.youtube.com/watch?v=mqH21m0MsWk&list=PL0xRBLFXXsP7-0IVCmoo2FEWBrQzfH2l8&index=7)
