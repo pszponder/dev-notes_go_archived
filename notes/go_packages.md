@@ -72,6 +72,8 @@ Use the `package` keyword followed by the package name at the top of a `.go` fil
 
 Ex. Declare the `main.go` file to belong to the `main` package
 
+> **NOTE:** It is a convention to name the package the same name as the directory holding your go file.
+
 ```go
 // Declare the package name which this file belongs to
 package main
@@ -100,11 +102,17 @@ package main
 // Your logic goes here...
 ```
 
+## The init function
+
+We can use the [`init`](go_functions.md#init-function) function to perform any package-level initialization before executing the `main()` function.
+
 ## Importing Packages
 
 Use the `import` keyword to import packages to be used by the current `.go` file.
 
 We can either import a single package or multiple packages.
+
+> **NOTE:** When importing packages which are not in the same directory, your import path should start relative to your module path which is defined in [go.mod](go_modules.md#gomod)
 
 ```go
 // Import a single package
@@ -118,7 +126,7 @@ import (
 	"package1Name"
 	"package2Name"
 	"package3Name"
-  "namespace/packageName"
+	"namespace/packageName"
 	// ...
 )
 ```
