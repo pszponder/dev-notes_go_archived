@@ -61,6 +61,28 @@ type Pizza struct {
 }
 ```
 
+```go
+// Define a struct
+type Person struct {
+    FirstName string
+    LastName  string
+    Age       int
+}
+
+// Define a slice of Person structs
+people := []Person{
+    {"Alice", "Smith", 30},
+    {"Bob", "Johnson", 25},
+    {"Charlie", "Brown", 35},
+}
+
+// Define an array of Person structs
+var people [3]Person
+people[0] = Person{"Alice", "Smith", 30}
+people[1] = Person{"Bob", "Johnson", 25}
+people[2] = Person{"Charlie", "Brown", 35}
+```
+
 ## Instantiating Structs
 
 Structs are instantiated by:
@@ -151,6 +173,23 @@ person.Age       // 230
 person2.FirstName // "Legolas"
 person2.LastName  // "Greenleaf"
 person2.Age       // 230
+```
+
+```go
+    // Declare a slice of anonymous structs
+    people := []struct {
+        FirstName string
+        LastName  string
+        Age       int
+    }{
+        {"Alice", "Smith", 30},
+        {"Bob", "Johnson", 25},
+        {"Charlie", "Brown", 35},
+    }
+
+    // Access and print values
+    fmt.Println(people[0].FirstName) // Outputs: Alice
+    fmt.Println(people[1].Age)       // Outputs: 25
 ```
 
 ## Resources / References
