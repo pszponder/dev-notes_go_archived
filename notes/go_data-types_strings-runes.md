@@ -120,9 +120,108 @@ func main() {
 }
 ```
 
+## Working with Strings
+
+Can perform various string manipulation operations using the built-in `strings` package, which provides a wide range of functions for working with strings.
+
+### Finding String Length
+
+Use the `len()` function to find the length of a string
+
+```go
+str := "Hi!"
+length := len(str) // 3
+```
+
+### Concatenating Strings
+
+To concatenate strings, can use the `+` operator or the `strings.Join()` function
+
+```go
+str1 := "Hello, "
+str2 := "world!"
+
+// Using the + operator
+concat1 := str1 + str2
+
+// Using strings.Join()
+strs := []string{str1, str2}
+concat2 := strings.Join(strs, "")
+```
+
+### Splitting Strings
+
+To split a string into substrings based on a delimiter, you can use `strings.Split()`
+
+```go
+str := "apple,banana,cherry"
+parts := strings.Split(str, ",") // Splits into []string{"apple", "banana", "cherry"}
+```
+
+### Extracting Substrings
+
+To extract a substring from a string, use string slicing
+
+```go
+subString := myStr[<startIdx>:<endIdx>]
+```
+
+```go
+str := "Hello, world!"
+sub := str[0:5] // Extracts Hello
+```
+
+### Checking If String Contains Substring
+
+To check if a string contains a substring, can use `strings.Contains()`
+
+```go
+str := "Hello, world!"
+contains := strings.Contains(str, "world") // Returns true
+```
+
+### Replacing Substrings
+
+To replace occurrences of a substring in a string, you can use `strings.Replace()`
+
+```go
+str := "Hello, world!"
+newStr := strings.Replace(str, "world", "Go", -1) // Replaces "world" with "Go"
+```
+
+### Trimming Whitespace
+
+To remove leading and trailing whitespace from a string, you can use `strings.TrimSpace()`.
+
+```go
+str := "   Hello, world!   "
+trimmed := strings.TrimSpace(str) // Removes leading/trailing spaces
+```
+
+### Changing Case
+
+To convert a string to uppercase or lowercase, you can use `strings.ToUpper()` and `strings.ToLower()`.
+
+```go
+str := "Hello, world!"
+upper := strings.ToUpper(str) // Converts to uppercase
+lower := strings.ToLower(str) // Converts to lowercase
+```
+
+### String Comparison
+
+To compare strings, you can use `==` for equality checks. For case-insensitive comparisons, you can use `strings.EqualFold()`.
+
+```go
+str1 := "hello"
+str2 := "Hello"
+equal := (str1 == str2)                  // Case-sensitive comparison
+equalIgnoreCase := strings.EqualFold(str1, str2) // Case-insensitive comparison
+```
 
 ## Resources / References
 
+- [Go - strings package](https://pkg.go.dev/strings)
 - [Go - fmt package](https://pkg.go.dev/fmt)
 - [codecademy - Go Data Types](https://www.codecademy.com/resources/docs/go/data-types)
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
