@@ -23,7 +23,9 @@ type error interface {
 }
 ```
 
-## Creating Errors
+## Creating New Errors
+
+### errors.new()
 
 Use `errors.New()` to create a new error value with a given error message
 
@@ -53,6 +55,44 @@ func main() {
 
 	// Access error message using `Error()` method
 	fmt.Println(err.Error()) // Output: This is an error message
+}
+```
+
+### fmt.Errorf()
+
+`fmt.Errorf()` is used to create formatted error messages and return a new error
+
+```go
+// Function definition for Errorf function
+func Errorf(format string, a ...interface{}) error
+```
+
+- `format` is a string that specifies the format of the error message, similar to how it works with `fmt.Sprintf()`
+- `a ...interface{}` is a [variadic parameter](go_functions.md#variable-number-of-parameters-w-variadic-functions) that allows you to pass values to be inserted into the format string
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+func divide(a, b int) (int, error) {
+	if b == 0 {
+		// Format an error message, pass it into an error, and return it
+		return 0, fmt.Errorf("division by zero: %d / %d", a, b)
+	}
+	return a / b, nil
+}
+
+func main() {
+	result, err := divide(10, 0)
+	if err != nil {
+		fmt.Println("Error:", err)
+	} else {
+		fmt.Println("Result:", result)
+	}
 }
 ```
 
@@ -104,7 +144,9 @@ if err != nil {
 
 ## Custom Error Types
 
-To define a custom error type, make sure to implement the `Error() string` method defined by the built-in `error` [interface](go_data-types_interfaces.md)
+To define a custom error type, make sure to implement the `Error() string` method defined by the built-in `error` [interface](go_data-types_interfaces.md) via a pointer receiver function.
+
+> **IMPORTANT:** Make sure your custom error is defined via a pointer receiver function
 
 ```go
 // Define custom error type
@@ -112,9 +154,192 @@ type MyError struct {
 	Message string
 }
 
-// Define the `Error()` method to custom error type
+// Define the `Error()` method for custom error type
+// NOTE: This MUST be a `pointer receiver` function
 func (e *MyError) Error() string {
 	return e.Message
+}
+```
+
+Implementing and using the custom error type:
+
+```go
+package main
+
+import "fmt"
+
+// Define custom error type for when dividing by zero
+type DivError struct {
+	a, b int
+}
+
+// Define the `Error()` method for custom error type
+// NOTE: This MUST be a `pointer receiver` function
+func (d *DivError) Error() string {
+	return fmt.Sprintf("Cannot divide by zero: %d / %d", d.a, d.b)
+}
+
+// Create a divide function which can return the custom error
+func divide(a, b int) (int, error) {
+	if b == 0 {
+		// Since DivError implements error interface,
+		// we can use it here
+		return 0, &DivError{a, b}
+	} else {
+		// If no error, return nil instead of the error
+		// As the last function return
+		return a / b, nil
+	}
+}
+
+func main() {
+	// Assign variables to value and error return
+	// of invoking the "divide" method
+	quotient, err := divide(10, 0)
+
+	// Check whether or not there was an error before proceeding
+	if err != nil {
+		fmt.Println(err)
+		// do other stuff to handle error here...
+	}
+
+	// If no error, do stuff here...
+}
+```
+
+### Checking for Specific Errors
+
+Use the `errors.Is()` method (part of the `errors` package) to check if an error or any of its underlying errors are equal to a specified target error.
+
+- Useful to enable to to handle specific errors
+- Useful when dealing with wrapped / layered errors
+
+```go
+// Function definition of `errors.Is()` method
+// `err` is the error to check
+// `target` is the error you're searching for
+func Is(err, target error) bool
+```
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+func main() {
+	// Create some errors
+	err1 := errors.New("Error 1")
+	err2 := errors.New("Error 2")
+	wrappedErr := fmt.Errorf("Wrapped: %w", err2)
+
+	// Check if an error is equal to a target error
+	fmt.Println(errors.Is(err1, err2))        // false (err1 is not equal to err2)
+	fmt.Println(errors.Is(wrappedErr, err2))  // true (wrappedErr contains err2)
+	fmt.Println(errors.Is(wrappedErr, err1))  // false (wrappedErr does not contain err1)
+}
+```
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+// Define custom error types
+type NotFoundError struct{ Msg string }
+type PermissionDeniedError struct{ Reason string }
+
+// Implement the Error() method for custom error types
+func (e NotFoundError) Error() string {
+	return e.Msg
+}
+
+func (e PermissionDeniedError) Error() string {
+	return e.Reason
+}
+
+func main() {
+	// Create instances of custom errors
+	notFoundErr := NotFoundError{Msg: "Resource not found"}
+	permissionErr := PermissionDeniedError{Reason: "Insufficient permissions"}
+
+	// Simulate an API function that returns an error
+	apiError := func() error {
+		// Simulate a "not found" error
+		return notFoundErr
+	}()
+
+	// Check for specific errors using errors.Is
+	if errors.Is(apiError, notFoundErr) {
+		fmt.Println("API returned a 'not found' error:", apiError)
+	} else if errors.Is(apiError, permissionErr) {
+		fmt.Println("API returned a 'permission denied' error:", apiError)
+	} else {
+		fmt.Println("API returned an unknown error:", apiError)
+	}
+}
+```
+
+### Converting Error Types
+
+The `errors.As()` function is used to check if an error value or any of its underlying errors can be type asserted to a specific error type
+
+- It is similar to `errors.Is()`, but it allows you to extract the underlying error of a specific type for further processing.
+
+```go
+// Function declaration for `errors.As()`
+func As(err error, target interface {}) bool
+```
+
+- `err` is the error value to check
+- `target` is a pointer to a variable of the error type you want to assert. It should be of type `error`
+- Returns `true` if `err` is not `nil` and can be type asserted to `target` and it performs the type assertions, setting `target` to the underlying error value of the correct type
+- If the type assertion fails or if `err` is `nil`, `false` is returned
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+	"os"
+)
+
+func main() {
+	// Create a custom error type
+	type FileNotFoundError struct {
+		Path string
+	}
+
+	// Implement the Error() method for the custom error type
+	func (e FileNotFoundError) Error() string {
+		return fmt.Sprintf("File not found: %s", e.Path)
+	}
+
+	// Simulate an error that wraps a custom error
+	wrappedErr := fmt.Errorf("Wrapped error: %w", FileNotFoundError{"myfile.txt"})
+
+	// Attempt to extract the custom error
+	var fileNotFoundErr FileNotFoundError
+	if errors.As(wrappedErr, &fileNotFoundErr) {
+		fmt.Println("Custom error type extracted:", fileNotFoundErr.Error())
+	} else {
+		fmt.Println("Custom error type not found in the wrapped error")
+	}
+
+	// Another example: Using errors.As to extract os.PathError
+	fileOpenErr := os.ErrNotExist
+	var pathErr *os.PathError
+	if errors.As(fileOpenErr, &pathErr) {
+		fmt.Println("os.PathError extracted:", pathErr.Path)
+	} else {
+		fmt.Println("os.PathError not found in the error")
+	}
 }
 ```
 
