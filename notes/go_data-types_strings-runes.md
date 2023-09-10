@@ -94,29 +94,29 @@ formattedString := fmt.Sprintf("Name: %s %s, Age: %d\n", firstName, lastName, ag
 package main
 
 import (
-    "fmt"
-    "os"
+	"fmt"
+	"os"
 )
 
 func main() {
-    name := "Charlie"
-    age := 35
+	name := "Charlie"
+	age := 35
 
-    // Print formatted output to a specified writer (in this case, to a file)
-    file, err := os.Create("output.txt")
-    if err != nil {
-        fmt.Println("Error:", err)
-        return
-    }
-    defer file.Close()
+	// Print formatted output to a specified writer (in this case, to a file)
+	file, err := os.Create("output.txt")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer file.Close()
 
-    _, err = fmt.Fprintf(file, "Name: %s, Age: %d\n", name, age)
-    if err != nil {
-        fmt.Println("Error:", err)
-        return
-    }
+	_, err = fmt.Fprintf(file, "Name: %s, Age: %d\n", name, age)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
 
-    fmt.Println("Data written to 'output.txt'")
+	fmt.Println("Data written to 'output.txt'")
 }
 ```
 
@@ -148,6 +148,8 @@ concat1 := str1 + str2
 strs := []string{str1, str2}
 concat2 := strings.Join(strs, "")
 ```
+
+> Note: You can also use [`string.Builder`](#string-builder) to build / concatenate strings more efficiently
 
 ### Splitting Strings
 
@@ -219,9 +221,118 @@ equal := (str1 == str2)                  // Case-sensitive comparison
 equalIgnoreCase := strings.EqualFold(str1, str2) // Case-insensitive comparison
 ```
 
+## String Builder
+
+`strings.Builder` can be used to efficiently build and concatenate strings
+
+- More efficient alternative to repeatedly using string concatenation with the `+` operator because it minimizes memory allocation and copying
+
+```go
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	// Create a new strings.Builder
+	var builder strings.Builder
+
+	// Append strings to the builder
+	builder.WriteString("Hello, ")
+	builder.WriteString("world!")
+
+	// Get the final string from the builder
+	result := builder.String()
+
+	// Print the result
+	fmt.Println(result) // Outputs: Hello, world!
+}
+```
+
+```go
+// Function to join and reverse a sequence of strings
+func joinedAndReverse(strs ...string) (string, string) {
+	// Create new string builder
+	var sb strings.Builder
+
+	// Loop through slice of strings,
+	// adding each string to the string builder
+	for _, str := range strs {
+		sb.WriteString(str)
+	}
+
+	// Save the newly built string to a variable
+	joined := sb.String()
+
+	// Reset the string builder to reuse it
+	sb.Reset()
+
+	// Loop through slice of string backwards
+	// write each string to the string builder
+	for i := len(strs) - 1; i >= 0; i-- {
+		sb.WriteString(strs[i])
+	}
+
+	// Save newly reversed string to a variabled
+	reversed := sb.String()
+
+	return joined, reversed
+}
+```
+
+```go
+/*
+This example shows how to use a string builder
+to build a string
+
+`fmt.Fprintf` is used to format a string and write
+to an `io.Writer` which is the string builder
+in this case.
+
+Ths is possible because string builder
+implements the `io.Writer` interface.
+*/
+
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	// Create a new strings.Builder
+	var sb strings.Builder
+
+	// Loop from 3 down to 1 (inclusive)
+	for i := 3; i >= 1; i-- {
+		// Use fmt.Fprintf to format and append
+		// the current value of 'i'
+		// followed by "..." to the 'sb' Builder
+		fmt.Fprintf(&sb, "%d...", i)
+	}
+
+	// Append the string "ignition" to the 'sb' Builder
+	sb.WriteString("ignition")
+
+	// Print the final string constructed in the Builder
+	// using sb.String()
+	fmt.Println(sb.String()) // 3...2...1...ignition
+}
+
+```
+
+Check out this link for more info: [Jon Calhoun - Concatenating and Building Strings in Go 1.10+](https://www.calhoun.io/concatenating-and-building-strings-in-go/)
+
 ## Resources / References
 
 - [Go - strings package](https://pkg.go.dev/strings)
+- [Go - strings builder](https://pkg.go.dev/strings#Builder)
 - [Go - fmt package](https://pkg.go.dev/fmt)
 - [codecademy - Go Data Types](https://www.codecademy.com/resources/docs/go/data-types)
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
+- [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)
+- [Jon Calhoun - Concatenating and Building Strings in Go 1.10+](https://www.calhoun.io/concatenating-and-building-strings-in-go/)
+- [Jon Calhoun - 6 Tips for Using Strings in Go](https://www.calhoun.io/6-tips-for-using-strings-in-go/)
