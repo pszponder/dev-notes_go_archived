@@ -367,7 +367,7 @@ func main() {
 
 `recover()` is a built-in function which enables the program to regain control after a panic
 
-- Use `recover()` in combination with the `defer` statement to capture and handle panics gracefully
+- Use `recover()` in combination with the [`defer`](go_functions.md#deferring-function-execution-w-defer-keyword) statement to capture and handle panics gracefully
 
 ```go
 func main() {
