@@ -202,5 +202,6 @@ func ResetWithPenalty(r Resetter) {
 - [codecademy - interfaces](https://www.codecademy.com/resources/docs/go/interfaces)
 - [NerdCademy - Learn Go Interfaces](https://www.youtube.com/watch?v=KB3ysH8cupY)
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
+- [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)
 - [Anthony GG - How to Refactor A Golang Project by Using Interfaces](https://www.youtube.com/watch?v=Ax7J_Ks0UWs)
 - [freeCodeCamp - Go Programming - Golang Course with Bonus Projects](https://www.youtube.com/watch?v=un6ZyFkqFKo)

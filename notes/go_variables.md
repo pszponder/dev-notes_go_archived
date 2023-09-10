@@ -429,3 +429,4 @@ func main() {
 ## Resources / References
 
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
+- [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)

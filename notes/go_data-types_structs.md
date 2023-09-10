@@ -197,3 +197,4 @@ person2.Age       // 230
 - [codecademy - Go Data Types](https://www.codecademy.com/resources/docs/go/data-types)
 - [codecademy - Composition](https://www.codecademy.com/resources/docs/go/composition)
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
+- [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)

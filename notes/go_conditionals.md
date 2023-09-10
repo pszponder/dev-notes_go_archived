@@ -249,3 +249,4 @@ switch y {
 - [codecademy - conditionals](https://www.codecademy.com/resources/docs/go/conditionals)
 - [codecademy - switch](https://www.codecademy.com/resources/docs/go/switch)
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
+- [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)

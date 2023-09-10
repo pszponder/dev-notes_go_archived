@@ -408,6 +408,7 @@ func main() {
 ## Resources / References
 
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
+- [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)
 - [Go - Error Handling and Go](https://go.dev/blog/error-handling-and-go)
 - [NerdCademy - Golang Error Handling | Go Tutorial for Beginners](https://www.youtube.com/watch?v=VMveb4GqRck)
 - [Anthony GG - Golang Error Handling is Better Than You Think!](https://www.youtube.com/watch?v=XCXHzfJZ6CA)

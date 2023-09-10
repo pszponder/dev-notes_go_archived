@@ -331,3 +331,4 @@ fmt.Println(copiedSlice)   // [10 20 99 40 50]
 
 - [codecademy - Go Data Types](https://www.codecademy.com/resources/docs/go/data-types)
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
+- [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)

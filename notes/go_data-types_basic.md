@@ -17,3 +17,4 @@
 - [Go - fmt package](https://pkg.go.dev/fmt)
 - [codecademy - Go Data Types](https://www.codecademy.com/resources/docs/go/data-types)
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
+- [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)

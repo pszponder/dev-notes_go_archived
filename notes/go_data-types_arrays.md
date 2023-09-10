@@ -220,3 +220,4 @@ copiedArray := originalArray
 
 - [codecademy - Arrays](https://www.codecademy.com/resources/docs/go/arrays)
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
+- [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)

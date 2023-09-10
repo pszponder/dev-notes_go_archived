@@ -135,3 +135,4 @@ for key, value := range myMap {
 
 - [codecademy - map type](https://www.codecademy.com/resources/docs/go/map)
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
+- [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)
