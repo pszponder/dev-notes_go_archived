@@ -555,6 +555,151 @@ func main() {
 }
 ```
 
+## Deferring function execution w/ defer keyword
+
+The `defer` keyword is used to ensure that a function call (usually for cleanup tasks) is executed later in a program's execution, specifically just before the surrounding function (in which the `defer` was written) returns.
+
+The primary use of `defer` is to simplify function that perform various clean-up actions, like closing files, releasing resources, or unlocking mutexes.
+
+> `defer` helps in writing cleaner and more readable code by ensuring that cleanup or finishing tasks are always executed
+
+How `defer` works:
+
+- Function calls with the `defer` keyword begin executing just before the parent function returns.
+- **Order of Execution:** Deferred function calls are executed in Last in First Out (`LIFO`) order. That means if you have multiple `defer` statements, the last one will be executed first (think of a stack).
+- **Function Arguments Evaluation**: Arguments of a deferred function are evaluated when the `defer` is executed, now when the actual deferred function is run.
+- **Runs even after an Error:** A deferred function will run regardless of how the surrounding function exits, whether it exits normally or due to a panic (an unhandled runtime error in Go)
+
+```go
+/* ================================================ */
+/* Basic example of using `defer` for file handling */
+/* ================================================ */
+
+func readFile(filename string) {
+    file, err := os.Open(filename)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // This will ensure that the file is closed
+    // after all operations on it are done.
+    defer file.Close()
+
+    // ... other operations on the file ...
+}
+
+/*
+Even if an error occurs during the "other operations of the file",
+the `defer` statement guarantees that `file.Close()`
+will be executed before `readFile` returns and exits.
+*/
+```
+
+```go
+/* ================== */
+/* Order of Execution */
+/* ================== */
+
+// Stack the invocations of fmt.Println()
+// Deferred calls are stacked and executed in reverse order
+func printNumbers() {
+    for i := 1; i <= 3; i++ {
+        defer fmt.Println(i)
+    }
+}
+
+// When calling printNumbers(), the output will be:
+// 3
+// 2
+// 1
+```
+
+```go
+/* ======================= */
+/* Evaluation of Arguments */
+/* ======================= */
+
+func printLater(a int) {
+    defer fmt.Println(a)
+    a *= 2
+    return
+}
+
+// When calling printLater(10), the output will be:
+// 10
+
+/*
+Even though "a" is modified after the "defer" statement,
+the deferred function prints the value of "a" as it was
+when the "defer" statement was executed.
+*/
+```
+
+### Handling panics w/ defer
+
+A deferred function can be used in conjunction with the built-in [`recover()`](go_error-handling.md#recover) function to handle or log panics gracefully.
+
+```go
+/*
+In this example:
+- Define a deferred anonymous function inside `riskyOperation()`
+- The `recover` function inside the deferred
+  function captures the panic.
+- The deferred function logs the panic,
+  allowing the program to continue its execution
+  gracefully without crashing
+- As a result, even after the panic in `riskyOperation()`,
+  the `main` function continues executing its next statement
+*/
+
+package main
+
+import "fmt"
+
+func riskyOperation() {
+	// This anonymous function is deferred,
+    // meaning it will be the last to run
+	// within the scope of riskyOperation,
+    // even if a panic occurs.
+	defer func() {
+		// recover() is a built-in function that
+        // retrieves the value passed to panic()
+		// if the current function is panicking.
+        // If not, it returns nil.
+		if r := recover(); r != nil {
+			// Print the recovered panic value.
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
+
+	// Start of the risky operation.
+	fmt.Println("Starting risky operation...")
+
+	// Introduce a panic (a runtime error).
+	panic("Something went wrong!")
+
+	// This line won't be executed because of the panic above.
+	fmt.Println("Finished risky operation.")
+}
+
+func main() {
+	riskyOperation() // Call the function that contains a panic.
+
+	// Because the panic was recovered in riskyOperation(),
+    // the program doesn't crash,
+	// and this line will be executed normally.
+	fmt.Println("Continuing execution after riskyOperation...")
+}
+
+/*
+Program Output:
+
+Starting risky operation...
+Recovered from panic: Something went wrong!
+Continuing execution after riskyOperation...
+*/
+```
+
 ## init function
 
 The `init` function is a special function that can be defined in a Go [package](go_packages.md).
