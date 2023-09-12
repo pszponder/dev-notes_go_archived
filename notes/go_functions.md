@@ -406,6 +406,7 @@ A `Receiver Function` (a.k.a. `method`) is a function associated with a type.
 
 - `Receiver Function`s allow you to associate behavior or functionality with a custom-defined type
 - This is similar to methods in object-oriented programming languages
+- `Receiver Functions` can be associated with any type (except pointers and interfaces), but it's most commonly used with [`structs`](go_data-types_structs.md)
 
 There are two types of receiver functions
 

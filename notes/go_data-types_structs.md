@@ -192,6 +192,10 @@ person2.Age       // 230
     fmt.Println(people[1].Age)       // Outputs: 25
 ```
 
+## Struct Methods (Receiver Functions)
+
+[`Receiver Functions`](go_functions.md#receiver-functions-type-methods)
+
 ## Resources / References
 
 - [codecademy - Go Data Types](https://www.codecademy.com/resources/docs/go/data-types)
