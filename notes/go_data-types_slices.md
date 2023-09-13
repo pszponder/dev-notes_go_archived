@@ -2,14 +2,14 @@
 
 ## Intro to Slices in Go
 
-> Slices are a type of [collection](go_data-types_collection.md) in Go
+Slices are a [reference type](go_data-types_value-vs-reference.md#reference-types) in Go. They are also a type of [collection](go_data-types_collection.md) in Go
 
 - A `slice` is a dynamic array that can grow or shrink in size
-- Under the hood, a slice references an array.
+- Under the hood, a slice references / [points to](go_data-types_pointers.md) an array.
 - A slice is defined with empty square brackets
 - As with an array, a slice can contain only one type of data
 - Slices can be resized after their initial creation
-- Slices are passed into functions as references to the original array (so if the function changes the slice, the original referenced array will also be affected)
+- Slices are passed into functions as references / [pointers](go_data-types_pointers.md) to the original array (so if the function changes the slice, the original referenced array will also be affected)
 - Commonly used for working with sequences of data
 
 > Zero value for Slice types (`[]T`) is `nil`

@@ -2,7 +2,7 @@
 
 ## Intro to Number Types in Go
 
-Numbers are a [basic type](go_data-types_basic.md) in Go
+Numbers are a [basic](go_data-types_basic.md) [value](go_data-types_value-vs-reference.md#value-types) type in Go
 
 There are 3 types of numbers in Go:
 

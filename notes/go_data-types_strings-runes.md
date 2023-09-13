@@ -2,7 +2,7 @@
 
 ## Intro to Strings / Runes in Go
 
-Strings and Runes are a [basic type](go_data-types_basic.md) in Go
+Strings are a [basic](go_data-types_basic.md#strings--runes) [value](go_data-types_value-vs-reference.md#value-types) type in Go
 
 | Data Type | Description            |
 | --------- | ---------------------- |

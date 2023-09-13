@@ -2,7 +2,7 @@
 
 ## Booleans in Go
 
-Booleans are one of the [basic types](go_data-types_basic.md#booleans) in Go
+Booleans are a [basic](go_data-types_basic.md#booleans) [value](go_data-types_value-vs-reference.md#value-types) type in Go
 
 | Data Type | Description       |
 | --------- | ----------------- |

@@ -2,7 +2,7 @@
 
 ## Introduction to Interfaces in Go
 
-An `interface` is a [collection](go_data-types_collection.md) of method signatures
+Interfaces are a [reference type](go_data-types_value-vs-reference.md#reference-types) in Go. They are also a type of [collection](go_data-types_collection.md).
 
 - Defines a set of method signatures (input / output) that a data type or struct can implement
   - Method signatures look like [function types](go_data-types_functions.md)
@@ -204,4 +204,5 @@ func ResetWithPenalty(r Resetter) {
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
 - [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)
 - [Anthony GG - How to Refactor A Golang Project by Using Interfaces](https://www.youtube.com/watch?v=Ax7J_Ks0UWs)
+- [Anthony GG - This Will Make Everyone Understand Golang Interfaces](https://www.youtube.com/watch?v=rH0bpx7I2Dk)
 - [freeCodeCamp - Go Programming - Golang Course with Bonus Projects](https://www.youtube.com/watch?v=un6ZyFkqFKo)

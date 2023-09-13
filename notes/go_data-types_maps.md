@@ -2,7 +2,7 @@
 
 ## Intro to Maps in Go
 
-> Maps are a type of [collection](go_data-types_collection.md) in Go
+Maps are a [reference type](go_data-types_value-vs-reference.md#reference-types) in Go. They are also a type of [collection](go_data-types_collection.md) in Go
 
 - A `map` is a collection of key-value pairs
 - Similar to dictionaries or hash maps in other languages

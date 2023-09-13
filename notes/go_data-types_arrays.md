@@ -2,7 +2,7 @@
 
 ## Arrays Overview
 
-> Arrays are a type of [collection](go_data-types_collection.md) in Go
+Arrays are a [value type](go_data-types_value-vs-reference.md#value-types) in Go. They are also considered to be a type of [collection](go_data-types_collection.md) in Go
 
 - An `array` is a fixed-size sequence of elements of the same type
 - It is defined using square brackets and specifying the size

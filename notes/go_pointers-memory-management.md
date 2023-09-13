@@ -92,13 +92,60 @@ modifyValue(&x) // Pass a pointer to x to modify its value
 fmt.Println(x)  // Output: 100
 ```
 
-### Functions and Pointers to Collection Types
+### Functions and Pointers to Reference Types
 
-> **NOTE:** When using pointers with [collection types](go_data-types_collections.md) (arrays, slices, maps, or structs, etc.) as function parameters in Go, you typically don't need to use the `*` operator to dereference them inside the function.
+> **NOTE:** When using pointers with [reference types](go_data-types_value-vs-reference.md#reference-types) (slices, maps, channels, pointer, interfaces, funcitons) as function parameters in Go, you typically don't need to use the `*` operator to dereference them inside the function.
 
 - This is because these data structures are already reference types, which means that when you pass them as pointers to functions, you're already passing a reference to the original data structure
 - Any modifications made to the data structure inside the function will affect the original data structure
 - You still need to define any pointer parameters in the function definition using `*`
+
+```go
+// Any modifications to the slice `sl` within the func
+// will be reflected in the original slice passed
+// by the caller, without any need for
+// explicit dereferencing
+func modifySlice(sl []int) {
+    sl[0] = 999
+}
+```
+
+### Functions and Pointers to Struct Types
+
+In Go, even though [structs](go_data-types_structs.md) are [value types](go_data-types_value-vs-reference.md#value-types), Go allows you to to use the dot notation to directly access its fields without explicit dereferencing.
+
+- This is a syntactical convenience provided by Go
+- Under the hood, the Go compiler automatically dereferences the pointer pointing to the struct for you
+- **CAUTION** If you want to modify the value the pointer points to (like assigning a whole new struct to that pointer), hen you'll need to dereference the struct.
+
+```go
+package main
+
+import "fmt"
+
+// Define a new struct type called "Person"
+// with two fields:
+// "Name" of type string and "Age" of type int.
+type Person struct {
+    Name string
+    Age  int
+}
+
+func main() {
+    // Here, we're creating a new instance of the "Person" struct
+    // and taking its address using the & operator.
+    // This means 'p' is a pointer to a 'Person' struct.
+    p := &Person{Name: "Alice", Age: 25}
+
+    // Even though 'p' is a pointer,
+    // we can directly access the fields of the struct it points to
+    // without explicitly dereferencing the pointer.
+    // This is a syntactical convenience in Go.
+    // The Go compiler understands this
+    // and behind the scenes it's equivalent to doing (*p).Name.
+    fmt.Println(p.Name) // Alice
+}
+```
 
 ```go
 type MyStruct struct {
@@ -110,7 +157,7 @@ type MyStruct struct {
 func modifyValue(ptr *MyStruct) {
     // Since ptr is a pointer to a struct type
     // Don't need to use * to dereference the struct's fields
-    // Go automatically dereferences ptr when refer
+    // Go automatically dereferences ptr
     ptr.field1 = "hi"
     ptr.field2 += 2
 }
@@ -123,6 +170,21 @@ x := MyStruct{
 
 modifyValue(&x) // Pass a pointer to x to modify its value
 fmt.Println(x)  // Output: 100
+```
+
+```go
+type MyStruct struct {
+    Field int
+}
+
+// Since we are changing where the pointer
+// points to inside the function
+// (we want the pointer to point to a different struct)
+// we also need to dereference the pointer
+// to access the underlying struct
+func assignNewStruct(s *MyStruct) {
+    *s = MyStruct{Field: 100}
+}
 ```
 
 ## Nil Pointers

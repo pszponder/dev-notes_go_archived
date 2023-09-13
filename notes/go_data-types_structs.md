@@ -2,7 +2,7 @@
 
 ## Introduction to Structs
 
-> Structs are a type of [collection](go_data-types_collection.md) in Go
+Structs are a [value type](go_data-types_value-vs-reference.md#value-types) in Go. They are also considered to be a type of [collection](go_data-types_collection.md) in Go
 
 - A `struct` is a composite type that groups together zero or more fields of various types
 - Fields can have different data types and are accessed using dot notation
