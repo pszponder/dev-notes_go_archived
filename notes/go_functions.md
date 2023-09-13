@@ -2,8 +2,6 @@
 
 > NOTE: Go does not allow code to be written directly in the global scope. Instead, all executable code must be enclosed within a function. (You can still declare variables globally)
 
-> NOTE: Function calls in Go are "pass by value". This means that any argument passed to a function is copied (instead of a reference being copied)
-
 ## Function Syntax
 
 ```go
