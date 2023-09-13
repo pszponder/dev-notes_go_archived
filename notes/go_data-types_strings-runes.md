@@ -120,6 +120,82 @@ func main() {
 }
 ```
 
+### String() Interface
+
+You can implement a custom string representation for a type via the `String()` [method](go_functions.md#receiver-functions-type-methods)
+
+The `String()` method is used to provide a custom implementation of the `fmt.Stringer` [interface](go_data-types_interfaces.md), which the `fmt` package uses to print values
+
+```go
+type String interface {
+	String() string
+}
+```
+
+- By implementing the `String()` method on a type, you're telling Go how to represent that type as a string.
+- Useful for debugging, logging, or when you want to provide a user-friendly representation of the type
+- The `String()` method and the `fmt.Stringer` interface can be implemented for any type in Go
+
+```go
+type Person struct {
+	FirstName, LastName string
+	Age int
+}
+
+// If you wanted to print a `Person` instance
+// using fmt.Println(),
+// it would just display the struct fields by default
+// If you implement the String() method for the Person type,
+// You can change what fmt.Println() will return
+func (p Person) String() string {
+	return fmt.Sprintf("%s %s, age %d", p.FirstName, p.LastName, p.Age)
+}
+
+func main() {
+	p := Person{FirstName: "John", LastName: "Doe", Age: 30}
+	fmt.Println(p) // John Doe, age 30
+}
+```
+
+```go
+// Implementing String() method for basic type
+type MyInt int
+
+func (m MyInt) String() string {
+	return fmt.Sprintf("My special int: %d", m)
+}
+
+// Usage
+var x MyInt = 42
+fmt.Println(x)  // Outputs: My special int: 42
+```
+
+```go
+// Implementing String() method for a slice type
+type IntSlice []int
+
+func (is IntSlice) String() string {
+	return fmt.Sprintf("Length %d: %v", len(is), []int(is))
+}
+
+// Usage
+slice := IntSlice{1, 2, 3}
+fmt.Println(slice)  // Outputs: Length 3: [1 2 3]
+```
+
+```go
+// Implementing String() method for map type
+type StringToIntMap map[string]int
+
+func (m StringToIntMap) String() string {
+	return fmt.Sprintf("Map with %d keys", len(m))
+}
+
+// Usage
+myMap := StringToIntMap{"a": 1, "b": 2}
+fmt.Println(myMap)  // Outputs: Map with 2 keys
+```
+
 ## Working with Strings
 
 Can perform various string manipulation operations using the built-in `strings` package, which provides a wide range of functions for working with strings.
