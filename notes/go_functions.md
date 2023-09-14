@@ -862,6 +862,10 @@ Order of Execution for `init()` functions and the `main()` function:
    2. `init()` functions are called in the order they are defined in the package.
 2. Once all imported packages are initialized and after all `init()` functions in the `main` package have run, the `main()` function is then called.
 
+## Generic Functions
+
+[Generic Functions](go_generics.md#generic-functions)
+
 ## Resources / References
 
 - [codecademy - functions](https://www.codecademy.com/resources/docs/go/functions)

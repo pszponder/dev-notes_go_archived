@@ -196,6 +196,10 @@ person2.Age       // 230
 
 [`Receiver Functions`](go_functions.md#receiver-functions-type-methods)
 
+## Generic Structures
+
+[Generic Structs](go_generics.md#generic-structures)
+
 ## Resources / References
 
 - [codecademy - Go Data Types](https://www.codecademy.com/resources/docs/go/data-types)
