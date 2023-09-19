@@ -2,6 +2,8 @@
 
 ## Intro to Pointers in Go
 
+[Kantan Coding - Pointers](https://youtu.be/v-ttLYKqaO8?feature=shared)
+
 Function calls in Go are `pass by value`
 
 - When passing in an argument to a function, a copy of that value is made
@@ -71,6 +73,30 @@ valuePtr = &value
 
 value := "hello"
 valuePtr := &value
+```
+
+```go
+// https://youtu.be/v-ttLYKqaO8?feature=shared
+
+answer := 42
+fmt.Println(answer) // 42
+
+// Create a pointer to an int type
+var ptr *int
+
+// Print the memory address of the "answer" variable
+fmt.Println(&answer) // 0xc00001e0d0
+
+// Assign ptr to the memory address of answer
+ptr = &answer
+
+// Dereference the ptr variable to
+// access the actual value it is pointing to
+fmt.Println(*ptr) // 42
+
+// Dereference pointer to change the value it points to
+*ptr = 99
+fmt.Println(answer) // 99
 ```
 
 ## Passing Pointers to Functions
@@ -206,3 +232,4 @@ if ptr == nil {
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
 - [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)
 - [Anthony GG - Everything You Need To Know About Pointers in Golang](https://www.youtube.com/watch?v=mqH21m0MsWk&list=PL0xRBLFXXsP7-0IVCmoo2FEWBrQzfH2l8&index=7)
+- [Kantan Coding - Learn pointers](https://youtu.be/v-ttLYKqaO8?feature=shared)
