@@ -5,6 +5,7 @@
 `Generics` enable writing of functions and data structures that take and use a "generic" type.
 
 - This enables functions or data structures to handle multiple types of data
+- When invoking generic functions, Go can usually infer the type
 
 ## Generic Functions
 
@@ -16,6 +17,49 @@
 // funcName                           OR
 func MyFunc[T constraint, U constraintA | constraint B](a T, b U) T {
 	//...
+}
+```
+
+```go
+// https://youtu.be/yb4-RPBqVcs?feature=shared
+
+//...
+
+// Declare the Type Constraint
+type Number interface {
+	int | int32 | int64 | float32 | float64
+}
+
+/*
+This generic function's type T is of type Number
+Number is a custom type constraint
+*/
+func sumNums[T Number](numbers []T) T {
+	var result T
+	for i := range numbers {
+		result += numbers[i]
+	}
+	return result
+}
+
+func main() {
+	nums1 := []int{1, 2, 3, 4, 5}
+	nums2 := []int32{1, 2, 3, 4, 5}
+	nums3 := []int64{1, 2, 3, 4, 5}
+	nums4 := []float32{1.1, 2.2, 3.3, 4.4, 5.5}
+	nums5 := []float64{1.1, 2.2, 3.3, 4.4, 5.5}
+
+	sum1 := sumNums(nums1)
+	sum2 := sumNums[int32](nums2) // optionally specify type
+	sum3 := sumNums(nums3)
+	sum4 := sumNums[float32](nums4) // optionally specify type
+	sum5 := sumNums(nums5)
+
+	fmt.Printf("The sum of nums1 is %v", sum1)
+	fmt.Printf("The sum of nums2 is %v", sum2)
+	fmt.Printf("The sum of nums3 is %v", sum3)
+	fmt.Printf("The sum of nums4 is %v", sum4)
+	fmt.Printf("The sum of nums5 is %v", sum5)
 }
 ```
 
@@ -51,7 +95,7 @@ func PrintString[T Stringer](s T) {
 
 ### Built-In Type Constraints
 
-**NOTE:** Outside of the `any` and `comparable` type constraints which are available globally, you will have to import the `constraints` package to access the other built-in constraints.
+**NOTE:** Outside of the `any` and `comparable` type constraints which are available globally, you will have to import the `constraints` package to access the other built-in constraints, or compose your own.
 
 | Constraint   | Description                                                                  |
 | ------------ | ---------------------------------------------------------------------------- |
@@ -64,7 +108,7 @@ func PrintString[T Stringer](s T) {
 | `Float`      | All floating point numbers                                                   |
 | `Complex`    | All complex numbers                                                          |
 
-**CAUTION:** The constraints package is part of the experimental standard package. You can either import it or compose interfaces to obtain the same constraints above.
+**CAUTION:** The constraints package was archived as part of the experimental standard package in Go v1.21. You can either import it or compose interfaces to obtain the same constraints above.
 
 - To import, use `go get golang.org/x/exp/constraints`
 - Add `import "golang.org/x/exp/constraints"`
@@ -242,13 +286,40 @@ func main() {
 ```go
 import (
 	"fmt"
-	"constraints"
 )
+
+// Define generic types to be composed together
+// to create Ordered generic type
+type Signed interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64
+}
+
+type Unsigned interface {
+	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
+}
+
+type Integer interface {
+	Signed | Unsigned
+}
+
+type Float interface {
+	~float32 | ~float64
+}
+
+type Ordered interface {
+
+}
+
+// Compose together the Ordered generic type
+// with generic types defined above
+type Ordered interface {
+	Integer | Float | ~string
+}
 
 // Define a generic type
 // which can contain any string or number
 // via the Ordered constraint
-type MyArray[T constraints.Ordered] struct {
+type MyArray[T Ordered] struct {
 	inner []T
 }
 
@@ -287,3 +358,5 @@ func main() {
 - [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)
 - [The Go Blog - An Introductin to Generics](https://go.dev/blog/intro-generics)
 - [Golang Tutorial: Getting started with generics](https://go.dev/doc/tutorial/generics)
+- [Go 1.21: Generic Functions Comprehensive Revisit](https://medium.com/lyonas/go-1-21-generic-functions-comprehensive-guide-6528b37feb5c)
+- [Kantan Coding - Generics in 2.8 Minutes](https://youtu.be/yb4-RPBqVcs?feature=shared)
