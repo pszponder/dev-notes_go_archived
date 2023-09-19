@@ -216,9 +216,12 @@ func main() {
 
 ## Anonymous Functions
 
-A function declared without a name is an `anonymous function` (a.k.a. `lambda function` or `function literal`).
+A function declared without a name is an `anonymous function` (a.k.a. `function literal`, `lambda function` or `closures`).
 
 - Typically, an anonymous function is assigned to a variable
+- Can be used to write a function within a function
+- Can pass `anonymous functions` to a function as parameters
+  - Good practice to define [`function type`](go_data-types_functions.md) when defining a function parameter
 
 ```go
 // p1, ...pN = parameter1, ... parameterN
@@ -245,6 +248,41 @@ sum := func(a, b int) int {
 // Use the anonymous function
 result := sum(3, 5)
 fmt.Println("Sum:", result)
+}
+```
+
+```go
+// https://youtu.be/jHd0FczIjAE?feature=shared
+
+//...
+
+type DebitFuncType func(int) int
+
+/*
+This function returns a closure which includes:
+- The returned function ("debitFunc")
+- Variables used by the function ("amount")
+*/
+func activateGiftCard() DebitFuncType {
+	amount := 100
+
+	// debitFunc is an anonymous function
+	// It will be returned as a closure along w/
+	// any dependencies ("amount")
+	debitFunc := func(debitAmount int) int {
+		amount -= debitAmount
+		return amount
+	}
+
+	return debitFunc
+}
+
+func main() {
+	useGiftCard1 := activateGiftCard()
+	useGiftCard2 := activateGiftCard()
+
+	fmt.Println(useGiftCard1(10)) // 90
+	fmt.Println(useGiftCard2(5))  // 95
 }
 ```
 
@@ -558,7 +596,7 @@ func main() {
 
 The `defer` keyword is used to ensure that a function call (usually for cleanup tasks) is executed later in a program's execution, specifically just before the surrounding function (in which the `defer` was written) returns.
 
-The primary use of `defer` is to simplify function that perform various clean-up actions, like closing files, releasing resources, or unlocking mutexes.
+The primary use of `defer` is to simplify functions that perform various clean-up actions, like closing files, releasing resources, or unlocking mutexes.
 
 > `defer` helps in writing cleaner and more readable code by ensuring that cleanup or finishing tasks are always executed
 
@@ -570,27 +608,81 @@ How `defer` works:
 - **Runs even after an Error:** A deferred function will run regardless of how the surrounding function exits, whether it exits normally or due to a panic (an unhandled runtime error in Go)
 
 ```go
+/* =============================== */
+/* Simple example of using `defer` */
+/* =============================== */
+func one() {
+	fmt.Println("1")
+}
+
+func two() {
+	fmt.Println("2")
+}
+
+func three() {
+	fmt.Println("3")
+}
+
+func test() {
+	fmt.Println("Begin")
+
+	// Defer these function calls
+	defer one()
+	defer two()
+	defer three()
+
+	fmt.Println("End")
+}
+
+/*
+// Console Output:
+Begin
+End
+3
+2
+1
+*/
+```
+
+```go
 /* ================================================ */
 /* Basic example of using `defer` for file handling */
 /* ================================================ */
 
+package main
+
+import (
+	"log"
+	"os"
+)
+
 func readFile(filename string) {
 	file, err := os.Open(filename)
 	if err != nil {
-		log.Fatal(err)
+		// Log err to StdErr and call os.Exit(1) to terminate program
+		log.Fatal("Error opening the file:", err)
 	}
 
 	// This will ensure that the file is closed
 	// after all operations on it are done.
 	defer file.Close()
 
-	// ... other operations on the file ...
+	buffer := make([]byte, 0, 30)
+	bytes, err := file.Read(buffer)
+	if err != nil {
+		log.Fatal("Error reading the file", err)
+		// File will close with deferred call
+	}
+
+	fmt.printf("%c\n", bytes)
+	// File will close with deferred call
 }
 
 /*
-Even if an error occurs during the "other operations of the file",
+Even if an error occurs after `defer file.close()`,
 the `defer` statement guarantees that `file.Close()`
-will be executed before `readFile` returns and exits.
+will be executed before `readFile` returns and exits
+(regardless of success or error condition).
 */
 ```
 
@@ -872,3 +964,4 @@ Order of Execution for `init()` functions and the `main()` function:
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
 - [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)
 - [Anthony GG - Everything You Need To Know About Pointers in Golang](https://www.youtube.com/watch?v=mqH21m0MsWk&list=PL0xRBLFXXsP7-0IVCmoo2FEWBrQzfH2l8&index=7)
+- [Kantan Coding - Closures in 210 Seconds](https://www.youtube.com/watch?v=jHd0FczIjAE&list=PL7g1jYj15RUMMCMDYPyZHN3CaWbt3Rl5y&index=2)
