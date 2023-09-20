@@ -6,12 +6,15 @@
 
 - Nesting [`structs`](go_data-types_structs.md) within other structs
 - Nesting [`interfaces`](go_data-types_interfaces.md) within other interfaces
-- Somewhat analogous to inheritance in object-oriented languages
+- This is an example of `composition`
+
+> Go promotes `Composition` over `Inheritance`
 
 ## Embedded Interfaces
 
 `Embedded Interfaces` are [`interfaces`](go_data-types_interfaces.md) embedded into other interfaces
 
+- Useful for "extending" interfaces
 - Implementing the interface requires all embedded functions to be implemented
 - Reduces the need to write duplicate interface declarations
 - Changes in embedded interfaces automatically propagate
@@ -178,8 +181,70 @@ func main() {
 }
 ```
 
+```go
+// Declare struct type
+type Engine struct {
+	Power int
+}
+
+// Define a method for the Engine struct type
+func (e *Engine) Start() {
+	fmt.Println("Engine started with power:", e.Power)
+}
+
+// Compose the "Engine" struct inside the "Car" struct type
+type Car struct {
+	Engine // This is an anonymous field (no explicit field name)
+	Color string
+}
+
+// Can override a method in the "Car" struct
+func (c *Car) Start() {
+	fmt.Println("Car is starting!")
+	c.Engine.Start()
+}
+
+func main() {
+	// Define a "Car" struct
+	c := Car{
+		Engine: Engine{Power: 150},
+		Color:  "Red",
+	}
+
+	c.Start() // Invoke overwritten method
+	// Car is starting!
+	// Engine started with power: 150
+}
+```
+
+### Anonymous vs. Named Embedded Fields
+
+When you embed a field into a struct via composition, you can add it as a `anonymous field` or a `named field`
+
+```go
+type Engine struct {
+	Power int
+}
+
+// Embed / Compose the "Engine" struct via an anonymous field
+type Car struct {
+	Engine // anonymous field
+	Color string
+}
+
+// Embed / Compose the "Engine" struct via a named field
+// NOTE: You'll need to use the field name ("TruckEngine")
+//  to access the embedded type's methods / fields
+type Truck struct {
+	TruckEngine Engine // named field
+	Color 		string
+}
+```
+
 ## Resources / References
 
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
 - [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)
 - [Anthony GG - The Power of Struct Embedding And Interfaces in Golang](https://www.youtube.com/watch?v=fXZJu_JuH0A)
+- [Anthony GG - Mastering Inheritance By Struct Embedding In Golang](https://youtu.be/Gmlh0NrvzP0?feature=shared)
+- [Go by Example: Struct Embedding](https://gobyexample.com/struct-embedding)
