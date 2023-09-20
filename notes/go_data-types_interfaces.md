@@ -196,6 +196,10 @@ func ResetWithPenalty(r Resetter) {
 }
 ```
 
+## Interface Embedding / Composition
+
+[Interface Embedding / Composition](go_data-types_embedding.md#embedded-interfaces)
+
 ## References / Resources
 
 - [codecademy - Go Data Types](https://www.codecademy.com/resources/docs/go/data-types)
