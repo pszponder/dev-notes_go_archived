@@ -2,7 +2,10 @@
 
 ## Intro to Pointers in Go
 
-[Kantan Coding - Pointers](https://youtu.be/v-ttLYKqaO8?feature=shared)
+A `pointer` is a variable which stores a memory address as its value
+
+- The value of a pointer variable is a memory address
+- To access and manipulate the actual value referenced by the pointer, you have to `dereference` the pointer
 
 Function calls in Go are `pass by value`
 
@@ -12,29 +15,35 @@ Function calls in Go are `pass by value`
 
 > Using `pointers` in Go enables us to `pass by reference` arguments to functions (so we end up manipulating original data structure).
 
-Pointers are variables that point to locations in memory
+[Kantan Coding - Pointers](https://youtu.be/v-ttLYKqaO8?feature=shared)
 
-- The value of a pointer variable is a memory address
-- To access and manipulate the actual value referenced by the pointer, you have to `dereference` the pointer
+[JamieDev - Golang pointers explained, once and for all](https://www.youtube.com/watch?v=sTFJtxJXkaY)
 
 ### When to Use Pointers?
 
+[Anthony GG - Go Pointers - When & How to Use Them Efficiently](https://www.youtube.com/watch?v=3WsEDZRif6U)
+
 Recall that functions copy data passed into them. If you are passing large amounts of data, it is inefficient and resource intensive to do so.
 
-Use pointers when you are working with large amounts of data to avoid copying the data in your functions.
+Use Pointers when:
+
+- Updating application state
+- Working with large amounts of data to avoid copying the data in your functions.
 
 ## Creating Pointers
 
 `*` (Dereferencing Operator)
 
-- Use `*` on a type to indicate the type is a pointer
-- Use `*` on a pointer variable to dereference the pointer (access the value that is stored at the memory address referenced by the pointer)
+- Use `*` on a type to indicate the type is a pointer for that type
+- Use `*` on a pointer variable to dereference the pointer
+  - Access the value that is stored at the memory address referenced by the pointer
 - Use `*` to define a function parameter as a pointer
 
-`&` (Address Operator)
+`&` (Address Of Operator)
 
-- Use `&` to get the memory address of an existing variable (and optionally create / assign the memory address to a pointer variable)
-- Use `&` to pass a pointer as an argument to a function invocation
+- Use `&` to get the memory address of an existing variable
+  - Optionally create / assign the memory address to a pointer variable
+- Use `&` to pass a pointer as an argument to a function invocation which expects a pointer as an argument
 
 ```go
 myValue := <value> // Declare a variable
@@ -56,7 +65,7 @@ myPtr := &myValue // Get mem address of variable and assign to ptr
 ```
 
 ```go
-// EXAMPLE 1: Creating Pointer
+// EXAMPLE 1: Creating a Pointer
 
 value := "hello"
 
@@ -168,7 +177,7 @@ func main() {
     // without explicitly dereferencing the pointer.
     // This is a syntactical convenience in Go.
     // The Go compiler understands this
-    // and behind the scenes it's equivalent to doing (*p).Name.
+    // and behind the scenes it's equivalent to doing *p.Name
     fmt.Println(p.Name) // Alice
 }
 ```
@@ -232,4 +241,8 @@ if ptr == nil {
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
 - [GitHub - ztm-golang](https://github.com/jayson-lennon/ztm-golang)
 - [Anthony GG - Everything You Need To Know About Pointers in Golang](https://www.youtube.com/watch?v=mqH21m0MsWk&list=PL0xRBLFXXsP7-0IVCmoo2FEWBrQzfH2l8&index=7)
+- [Anthony GG - Go Pointers - When & How to Use Them Efficiently](https://www.youtube.com/watch?v=3WsEDZRif6U)
 - [Kantan Coding - Learn pointers](https://youtu.be/v-ttLYKqaO8?feature=shared)
+- [NerdCademy - Go Pointer Basics](https://www.youtube.com/watch?v=WUPG9612XhM)
+- [Ben Davis - GoLang POINTERS, the Basics in Less Than 4 Minutes!](https://www.youtube.com/watch?v=wqyvS27MkR0)
+- [JamieDev - Golang pointers explained, once and for all](https://www.youtube.com/watch?v=sTFJtxJXkaY)
