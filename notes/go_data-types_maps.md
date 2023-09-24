@@ -16,6 +16,10 @@ Maps are a [reference type](go_data-types_value-vs-reference.md#reference-types)
 ```go
 // Create a map using the `make` function
 myMap := make(map[<keyType>]<valueType>)
+
+// Can specify optional capacity of the map
+// enables go compiler to reserve memory for the map
+myMap := make(map[<keyType>]<valueType>, <#>)
 ```
 
 ```go
@@ -97,9 +101,11 @@ delete(myMap, "three")
 When querying a map for a particular key, you can actually extract a 2nd value which is a boolean value indicating whether the key-value pair exists or not
 
 ```go
-// If value for key exists in map, `exists` is true
-// otherwise, `exists` is false
-value, exists := myMap[<key>]
+// If value for key exists in map, `ok` is true
+// otherwise, `ok` is false
+// NOTE: you can use any variable name for ok,
+//  but "ok" is the standard
+value, ok := myMap[<key>]
 ```
 
 ```go
@@ -110,14 +116,13 @@ myMap := map[string]int{
     "three": 3,
 }
 
-// `exists` is boolean value which indicates
+// `ok` is boolean value which indicates
 //  if the key-value pair was found in the map
-value, exists := myMap["four"]
-
-if exists {
-    fmt.Printf("%s exists in the map with value %d\n", key, value)
-} else {
+value, ok := myMap["four"]
+if !ok {
     fmt.Printf("%s does not exist in the map\n", key)
+} else {
+    fmt.Printf("%s exists in the map with value %d\n", key, value)
 }
 ```
 
