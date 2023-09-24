@@ -343,6 +343,77 @@ func main() {
 }
 ```
 
+### Error Decorators (Decorating Errors w/ Metadata)
+
+```go
+// https://youtu.be/1XuMvfUF2Ew?feature=shared
+// abc.go
+
+package abc
+
+import "errors"
+
+// Fatal is a custom error type which embeds the built-in error interface.
+// (via type composition)
+// This means any value of type Fatal is also of type error.
+type Fatal struct {
+	error
+}
+
+// Unwrap returns the embedded error from the Fatal struct.
+// By implementing this method, the Fatal type can participate in error unwrapping.
+func (f *Fatal) Unwrap() error {
+	return f.error
+}
+
+// Retry attempts to execute the provided function "do"
+//  for a maximum of "maxTries" times.
+// It will stop retrying under two conditions:
+// 1. If the function "do" succeeds (i.e., returns nil error).
+// 2. If the function "do" returns a Fatal error.
+// If the function does not succeed after "maxTries" attempts,
+//  it returns an error indicating so.
+func Retry(maxTries int, do func() error) error {
+	for i := 0; i < maxTries; i++ {
+		err := do()
+		// If the function succeeds (no error), return nil.
+		if err == nil {
+			return nil
+		}
+		var fatal *Fatal
+		// Check if the error is of type Fatal.
+		if errors.As(err, &fatal) {
+			// If it's a Fatal error, stop retrying and return the error.
+			return err
+		}
+		// If error is not Fatal, continue to the next iteration.
+		continue
+	}
+	// If all iterations are exhausted and the function did not succeed, return an error.
+	return errors.New("maxTries reached")
+}
+
+```
+
+```go
+// https://youtu.be/1XuMvfUF2Ew?feature=shared
+// abc_test.go
+
+package abc
+
+func TestRetry(t *testing.T) {
+	cb := func() error {
+		err := errors.New("fatal error")
+		return &Fatal{err}
+	}
+
+	err := Retry(5, cb)
+	if err != nil {
+		t.Error(err)
+	}
+}
+```
+
 ## Panic and Recover
 
 Use `panic()` and `recover()` methods to handle severe errors
@@ -405,6 +476,75 @@ func main() {
 }
 ```
 
+## Error Wrapping / Unwrapping
+
+`Error Wrapping` / `Error Unwrapping` provides a standardized way to:
+
+- Add context to errors (`wrapping`)
+- Check types / values of errors
+- Retrieve underlying errors (`unwrapping`)
+- Make error handling more robust and maintainable
+
+Why is error wrapping / unwrapping useful?
+
+- **Adding Context**: By wrapping errors, you can add more contextual information to errors as they bubble up through your application's layers without losing the original error information.
+- **Decoupling**: By checking wrapped errors using [`errors.Is()`](go_error-handling.md#checking-for-specific-errors) or [`errors.As()`](go_error-handling.md#converting-error-types), you can decouple specific error handling from the rest of your code, making it more maintainable.
+
+### Error Wrapping
+
+`Wrapping errors` - Allows you to add more context to an error while retaining the original error.
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+func main() {
+	// Create a new error
+	originalError := errors.New("Original error")
+
+	// Use the `%w` verb in the format string
+	// to wrap the original error
+	// The `wrappedError` will now contain both
+	// the new message and the original error
+	wrappedError := fmt.Errorf("additional context: %w", originalError)
+}
+```
+
+### Error Unwrapping
+
+To retrieve the underlying error (or the next error in the chain), use the `Unwrap` method. If an error type has an associated `Unwrap` method, it can be used to retrieve the next error in the chain.
+
+```go
+// underlyingError is the same as originalError
+underlyingError := errors.Unwrap(wrappedError)
+```
+
+### Checking Wrapped Errors
+
+Often, you'll want to check if an error is of a specific type or has a specific value, even if it's wrapped deep inside multiple layers. The [`errors.Is()`](go_error-handling.md#checking-for-specific-errors) function allows for this:
+
+```go
+if errors.Is(wrappedError, originalError) {
+	// The wrappedError contains (directly or deeply) the originalError.
+}
+```
+
+### Casting Wrapped Errors
+
+Similarly, if you want to try and cast an error to a specific type, use [`errors.As()`](go_error-handling.md#converting-error-types):
+
+```go
+var specificError *MyErrorType
+if errors.As(wrappedError, &specificError) {
+	// The wrappedError (or one of its underlying errors) is of type MyErrorType.
+	// specificError now contains that error.
+}
+```
+
 ## Resources / References
 
 - [ZTM - Go Programming (Golang): The Complete Developer's Guide](https://zerotomastery.io/courses/learn-golang/)
@@ -412,3 +552,5 @@ func main() {
 - [Go - Error Handling and Go](https://go.dev/blog/error-handling-and-go)
 - [NerdCademy - Golang Error Handling | Go Tutorial for Beginners](https://www.youtube.com/watch?v=VMveb4GqRck)
 - [Anthony GG - Golang Error Handling is Better Than You Think!](https://www.youtube.com/watch?v=XCXHzfJZ6CA)
+- [Boldly Go - Go Error Handling](https://youtube.com/playlist?list=PLR-u4TOp1xsy3giKXr6Sl5X26sXrQvrLJ&feature=shared)
+- [Bitfield Consulting - Error Wrapping in Go](https://bitfieldconsulting.com/golang/wrapping-errors)
