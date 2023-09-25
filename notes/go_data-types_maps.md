@@ -131,8 +131,19 @@ if !ok {
 [Iterate over a Map](go_loops.md#looping-over-iterables-with-range)
 
 ```go
+// Iterate through key and value pairs
 for key, value := range myMap {
-    //...
+    // access "key" and "value" variables...
+}
+
+// Iterate only through keys
+for key := range myMap {
+    // access "key" variable...
+}
+
+// Iterate only through values
+for _, value := range myMap {
+    // access "value" variable...
 }
 ```
 
