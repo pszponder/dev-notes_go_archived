@@ -118,8 +118,8 @@ Can pass pointers to function arguments to modify original value rather than wor
 ```go
 // Define function which accepts a pointer to a variable of type int
 func modifyValue(ptr *int) {
-    // Dereference the pointer to update the actual variable's value
-    *ptr = 100
+	// Dereference the pointer to update the actual variable's value
+	*ptr = 100
 }
 
 x := 42 // Declare variable
@@ -141,7 +141,7 @@ fmt.Println(x)  // Output: 100
 // by the caller, without any need for
 // explicit dereferencing
 func modifySlice(sl []int) {
-    sl[0] = 999
+	sl[0] = 999
 }
 ```
 
@@ -162,39 +162,39 @@ import "fmt"
 // with two fields:
 // "Name" of type string and "Age" of type int.
 type Person struct {
-    Name string
-    Age  int
+	Name string
+	Age  int
 }
 
 func main() {
-    // Here, we're creating a new instance of the "Person" struct
-    // and taking its address using the & operator.
-    // This means 'p' is a pointer to a 'Person' struct.
-    p := &Person{Name: "Alice", Age: 25}
+	// Here, we're creating a new instance of the "Person" struct
+	// and taking its address using the & operator.
+	// This means 'p' is a pointer to a 'Person' struct.
+	p := &Person{Name: "Alice", Age: 25}
 
-    // Even though 'p' is a pointer,
-    // we can directly access the fields of the struct it points to
-    // without explicitly dereferencing the pointer.
-    // This is a syntactical convenience in Go.
-    // The Go compiler understands this
-    // and behind the scenes it's equivalent to doing *p.Name
-    fmt.Println(p.Name) // Alice
+	// Even though 'p' is a pointer,
+	// we can directly access the fields of the struct it points to
+	// without explicitly dereferencing the pointer.
+	// This is a syntactical convenience in Go.
+	// The Go compiler understands this
+	// and behind the scenes it's equivalent to doing *p.Name
+	fmt.Println(p.Name) // Alice
 }
 ```
 
 ```go
 type MyStruct struct {
-    field1 string
-    field2 int
+	field1 string
+	field2 int
 }
 
 // Define function which accepts a pointer to a variable of type MyStruct
 func modifyValue(ptr *MyStruct) {
-    // Since ptr is a pointer to a struct type
-    // Don't need to use * to dereference the struct's fields
-    // Go automatically dereferences ptr
-    ptr.field1 = "hi"
-    ptr.field2 += 2
+	// Since ptr is a pointer to a struct type
+	// Don't need to use * to dereference the struct's fields
+	// Go automatically dereferences ptr
+	ptr.field1 = "hi"
+	ptr.field2 += 2
 }
 
 // Declare struct variable
@@ -209,7 +209,7 @@ fmt.Println(x)  // Output: 100
 
 ```go
 type MyStruct struct {
-    Field int
+	Field int
 }
 
 // Since we are changing where the pointer
@@ -218,7 +218,7 @@ type MyStruct struct {
 // we also need to dereference the pointer
 // to access the underlying struct
 func assignNewStruct(s *MyStruct) {
-    *s = MyStruct{Field: 100}
+	*s = MyStruct{Field: 100}
 }
 ```
 
@@ -232,8 +232,51 @@ var ptr *int // Declare a pointer var which points to nil
 
 // Check if the pointer points to `nil`
 if ptr == nil {
-    fmt.Println("Pointer is nil")
+	fmt.Println("Pointer is nil")
 }
+```
+
+## Automatic Dereferencing of Method Calls w/ Pointer Receivers
+
+Method calls with [pointer receivers](go_functions.md#receiver-functions-type-methods) are automatically dereferenced
+
+- Allows you to invoke a method with a pointer receiver using a value of the type the pointer points to
+- Go will automatically take the address of the value for you
+
+```go
+package main
+
+import "fmt"
+
+// Counter struct definition.
+type Counter struct {
+	value int // value field to hold the count.
+}
+
+// Increment method defined with a pointer receiver.
+func (c *Counter) Increment() {
+	c.value++ // Increments the value of the Counter.
+}
+
+func main() {
+	c := Counter{} // Creating an instance c of type Counter (not a pointer).
+	fmt.Println("Initial value:", c.value) // Prints the initial value of c (0)
+
+	// Calling the Increment method on c.
+	// Though c is not a pointer,
+	// Go automatically takes the address for the method call.
+	// This is equivalent to (&c).Increment().
+	c.Increment()
+
+	// Prints the value after incrementing.
+	// The value is now 1 because the Increment method modifies the Counter in-place.
+	fmt.Println("After incrementing:", c.value)
+
+	// Output:
+	// Initial value: 0
+	// After incrementing: 1
+}
+
 ```
 
 ## Resources / References
