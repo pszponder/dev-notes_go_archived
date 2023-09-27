@@ -42,6 +42,8 @@
 - [Interfaces](go_data-types_interfaces.md)
 - [Functions](go_data-types_functions.md) (when treated as values or passed around)
 
+**NOTE:** Technically anything passed to a function is `pass-by-value`, meaning that `reference type` function arguments are also copied when passed into the function. Since the `reference types` don't contain values but pointers to values, the copied pointers still point to the same value in memory, and so modification of the reference type inside the function still effects the original data outside of the function.
+
 ### Slices are Reference Types w/ a Twist
 
 - A slice consists of a pointer to an array, length and capacity

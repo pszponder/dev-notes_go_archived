@@ -85,6 +85,13 @@ func multipleReturns3(n int, text string) (int, string) {
 }
 ```
 
+## Go functions are Pass-By-Value
+
+Go functions are `pass-by-value`
+
+- Any argument passed into a go function is copied.
+- It is important to understand the difference between [value vs reference types](go_data-types_value-vs-reference.md) in go and how they behave when passed into a function.
+
 ## Functions as Parameters & Arguments
 
 Functions can accept other functions as parameters and arguments.
