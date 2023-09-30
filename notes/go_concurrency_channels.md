@@ -16,7 +16,11 @@
 
 ## Channel Conventions
 
-When naming a channel variable, the variable should end with `ch` or `Ch`
+- When naming a channel variable, the variable should end with `ch` or `Ch`
+- When setting the size of a [buffered channel](go_concurrency_channels.md#buffered-channels), use powers of 2 (ex. 2, 4, 8, 16, 32, 64, 128, 256,...)
+- To avoid `deadlock` errors:
+  - WRITE to a channel before READing from it
+  - Close a channel when you are done writing to it
 
 ## Creating & Using Channels
 
@@ -37,10 +41,10 @@ myChannel <- <data>
 
 // Retrieve data from a channel
 // Notice that the channel is to the RIGHT of the arrow
-<- myChannel
+<-myChannel
 
 // Retrieve data from a channel and store it as a variable
-myVar := <- myChannel
+myVar := <-myChannel
 ```
 
 ```go
@@ -95,7 +99,7 @@ func main() {
 
 ## When to use Unbuffered vs Buffered Channels
 
-### Unbuffered Channel
+### Using an Unbuffered Channel
 
 ```go
 ch := make(chan int) // Unbuffered channel
@@ -112,10 +116,10 @@ ch := make(chan int) // Unbuffered channel
    1. Suitable for ensuring that a sent message is immediately picked up by a receiver before the sender continues execution
    2. Useful for synchronizing the execution of goroutines.
 
-### Buffered Channel
+### Using a Buffered Channel
 
 ```go
-ch := make(chan int, 5) // Buffered channel with a capacity of 5
+ch := make(chan int, 8) // Buffered channel with a capacity of 8
 ```
 
 1. **No Immediate Synchronization Guarantee:**
@@ -175,9 +179,159 @@ func receive(ch chan int) {
 }
 ```
 
-## Iterating through and closing channels
+## Iterating Over & Closing Channels
 
-## Wait Groups
+Use the `close(<ch>)` function to close a channel:
+
+```go
+// To close a channel, use the "close" function
+close(myChannel) // closes a channel named "myChannel"
+```
+
+Use either a [range](go_loops.md#looping-over-iterables-with-range) or [infinite for loop](go_loops.md#infinite-loop) to iterate over a channel and read the data written to it:
+
+```go
+// OPTION 1: Range over data written to the channel
+for myData := range myChannel {
+	// myData represents a piece of data written to the channel
+	fmt.Println(myData)
+}
+
+// OPTION 2: Loop over data written to channel
+for {
+	myData, ok := <-myChannel
+	if !ok {
+		break
+	}
+
+	// myData represents a piece of data written to the channel
+	fmt.Println(myData)
+}
+```
+
+Full example of writing to a channel, closing the channel, and reading from the channel.
+
+```go
+// Define a buffered channel of type string
+msgCh := make(chan string, 8)
+
+// Write some data to the channel
+msgCh <- "1st message"
+msgCh <- "2nd message"
+msgCh <- "3rd message"
+
+// Close the channel after you are done writing to it
+// Otherwise, you may get a deadlock error
+close(msgCh)
+
+// OPTION 1: Iterate over the channel via a range loop (preferred method)
+for msg := range msgCh {
+	fmt.Println(msg)
+}
+
+// OPTION 2: Infinite For Loop
+for {
+	// Receive data from the channel and save it into "msg" variable
+	// "ok" will be false when there are no more messages in the channel
+	msg, ok := <-msgCh
+
+	// Break out of infinite for loop if there are no more messages
+	if !ok {
+		// If ok is false, the channel is closed and drained.
+		break
+	}
+
+	fmt.Println(msg)
+}
+
+fmt.Println("Completed writing to and reading from channel")
+```
+
+### When to close a channel
+
+1. **Definite Break Point:**
+   1. Close the channel when you know that there will be no more data to send on the channel.
+   2. Useful to avoid deadlocks and ensure that receiving goroutines are not waiting indefinitely for data that will never come.
+2. **Prevent Leaks:**
+   1. Prevent goroutine leaks by closing channels when they are no longer needed.
+   2. Ensures that goroutines that are waiting to receive from the channel can stop waiting and free up resources.
+3. **Signaling:**
+   1. Use closed channels as a signaling mechanism to indicate to other goroutines that processing is done and they should finish up.
+
+### Data Producers & Data Consumers
+
+Below is an example of producing and consuming messages using Go channels.
+
+- One goroutine produces messages and sends them to a channel.
+- Another goroutine consumes messages from that channel.
+- Uses [WaitGroups](go_concurrency_waitgroups.md) to block the code until the goroutines return
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+func main() {
+	// Create a buffered channel with capacity 8.
+	messagesCh := make(chan string, 8)
+
+	var wg sync.WaitGroup
+	// Increment the WaitGroup counter.
+	wg.Add(2) // we have two goroutines: producer and consumer
+
+	// Start the producer goroutine.
+	go producer(messagesCh, &wg)
+
+	// Start the consumer goroutine.
+	go consumer(messagesCh, &wg)
+
+	// Wait for the counter to be decremented by both goroutines.
+	// Until this happens code below is blocked
+	wg.Wait()
+
+	// Close the channel
+	close(messagesCh)
+}
+
+// producer produces messages and sends them to the channel.
+func producer(ch chan string, wg *sync.WaitGroup) {
+	// Decrement the counter when the goroutine completes.
+	defer wg.Done()
+
+	for i := 0; i < 10; i++ {
+		msg := fmt.Sprintf("Message %d", i)
+
+		ch <- msg // Send the message to the channel.
+
+		fmt.Println("Produced:", msg)
+
+		// Sleep for a while before producing the next message.
+		time.Sleep(time.Millisecond * 500)
+	}
+}
+
+// consumer consumes messages from the channel.
+func consumer(ch chan string, wg *sync.WaitGroup) {
+	// Decrement the counter when the goroutine completes.
+	defer wg.Done()
+
+	// range over the channel to receive messages.
+	for msg := range ch {
+		fmt.Println("Consumed:", msg)
+
+		// Sleep for a while before consuming the next message.
+		time.Sleep(time.Second)
+	}
+}
+```
+
+## WaitGroups
+
+[WaitGroups](go_concurrency_waitgroups.md)
 
 ## select
 
