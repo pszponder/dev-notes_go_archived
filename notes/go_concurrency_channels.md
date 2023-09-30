@@ -329,11 +329,172 @@ func consumer(ch chan string, wg *sync.WaitGroup) {
 }
 ```
 
-## WaitGroups
+## Multi-Channel Control Flow w/ the select statement
 
-[WaitGroups](go_concurrency_waitgroups.md)
+The `select` statement in Go is used to wait on multiple communication operations (channels)
 
-## select
+- Allows a goroutine to wait on multiple communication operations
+- Will block until one of the communication operations can proceed
+  - **NOTE:** An empty select statement without cases (`select {}`) blocks forever
+    - Can be used to block a goroutine indefinitely
+    - See [basic usage of select statement](go_concurrency_channels.md#select-basic-usage) for example of using empty select statement
+- Useful for reading from multiple input channels or writing to multiple output channels concurrently
+
+### select Basic Usage
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	// Create two string channels
+	ch1 := make(chan string)
+	ch2 := make(chan string)
+
+	// Spin off goroutine
+	// which will continuously send data to ch1
+	// every second
+	go func() {
+		for {
+			ch1 <- "from 1"
+			time.Sleep(time.Second)
+		}
+	}()
+
+	// Spin off goroutine
+	// which will continuously send data to ch2
+	// every second
+	go func() {
+		for {
+			ch2 <- "from 2"
+			time.Sleep(time.Second)
+		}
+	}()
+
+	// Spin off goroutine
+	// which will continuously listen for messages
+	// from both channels
+	go func() {
+		for {
+			// This select statement is used
+			// to wait for messages from either ch1 or ch2
+			// and react to the message receipt
+			select {
+			case msg1 := <-ch1:
+				fmt.Println(msg1)
+			case msg2 := <-ch2:
+				fmt.Println(msg2)
+			}
+		}
+	}()
+
+	// Keep the program running indefinitely
+	// An empty select statement with no cases blocks forever
+	select {}
+}
+```
+
+### select with Default
+
+The `default` case in a `select` statement is run if no other case is ready. This is useful for preventing a `select` statement from blocking
+
+```go
+// Select block with default case.
+select {
+case msg := <-ch:
+	// If a message is received from channel ch, print the message.
+	fmt.Println(msg)
+default:
+	// If no message is received,
+	// this default case will be executed.
+	fmt.Println("no message received")
+}
+```
+
+### select for Timeouts
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	// Creating a string channel.
+	ch := make(chan string)
+
+	// Goroutine that sends a message to ch after
+	// sleeping for 2 seconds.
+	go func() {
+		time.Sleep(time.Second * 2)
+		ch <- "result"
+	}()
+
+	// This select statement waits for either
+	// a message from "ch" or a timeout of 1 second
+	select {
+	case res := <-ch:
+		// If a message is received from ch, print the result.
+		fmt.Println(res)
+	case <-time.After(time.Second):
+		// Run if no message is received within 1 second
+		fmt.Println("timeout")
+	}
+}
+```
+
+### Closing a Channel to Signal Exit
+
+Can you `select` to listen for a close signal on a channel to terminate a goroutine
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	// Creating a channel of empty struct to signal exit.
+	ch := make(chan struct{})
+
+	// Starting a goroutine.
+	go func() {
+		for {
+			select {
+			case <-ch:
+				// If the channel is closed,
+				// print the exit message
+				// and return from the goroutine.
+				fmt.Println("exiting goroutine")
+				return
+			default:
+				// Default case executed if no signal received on ch
+				fmt.Println("working...")
+				time.Sleep(time.Second)
+			}
+		}
+	}()
+
+	// Main goroutine sleeps for 3 seconds.
+	time.Sleep(time.Second * 3)
+
+	// Closing the channel to signal the goroutine to exit.
+	// Triggers the 1st case in the select statement
+	close(ch)
+
+	// Giving some time for the goroutine to clean up
+	// and exit before the program exits.
+	time.Sleep(time.Second)
+}
+```
 
 ## Resources / References
 
