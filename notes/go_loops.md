@@ -4,13 +4,13 @@
 
 ```go
 for initialization; condition; iteration {
-    // Loop body
+	// Loop body
 }
 ```
 
 ```go
 for i := 0; i < 5; i++ {
-    fmt.Println(i)
+	fmt.Println(i)
 }
 ```
 
@@ -26,14 +26,14 @@ for i := 10; i > 0; i-- {
 
 ```go
 for condition {
-    // Loop body
+	// Loop body
 }
 ```
 
 ```go
 sum := 0
 for sum < 10 {
-    sum += 2
+	sum += 2
 }
 ```
 
@@ -43,28 +43,28 @@ for sum < 10 {
 
 ```go
 for {
-    // Loop body
+	// Loop body
 }
 ```
 
 ```go
 for {
-    // Loop body
+	// Loop body
 
-    // Use this check to break out of infinite loop
-    if <condition> {
-        break
-    }
+	// Use this check to break out of infinite loop
+	if <condition> {
+		break
+	}
 }
 ```
 
 ```go
 count := 0
 for {
-    count++
-    if count > 5 {
-        break
-    }
+	count++
+	if count > 5 {
+		break
+	}
 }
 ```
 
@@ -74,14 +74,14 @@ for {
 
 ```go
 for index, value := range iterable {
-    // Loop body
+	// Loop body
 }
 ```
 
 ```go
 numbers := []int{1, 2, 3}
 for idx, num := range numbers {
-    fmt.Printf("Index: %d, Value: %d\n", idx, num)
+	fmt.Printf("Index: %d, Value: %d\n", idx, num)
 }
 ```
 
@@ -91,13 +91,13 @@ arr := [...]string{"hello", "world", "!"}
 
 // Loop through elements in an array
 for idx, element := range arr {
-    fmt.Println(idx, element)
+	fmt.Println(idx, element)
 
-    // Loop through the rune (characters) of each element
-    // NOTE: _ means we don't wish to use idx in this case
-    for _, ch := range element {
-        fmt.Printf("  %q\n", ch)
-    }
+	// Loop through the rune (characters) of each element
+	// NOTE: _ means we don't wish to use idx in this case
+	for _, ch := range element {
+		fmt.Printf("  %q\n", ch)
+	}
 }
 ```
 
@@ -109,10 +109,10 @@ Use the `break` statement to exit the current loop prematurely.
 
 ```go
 for i := 1; i <= 5; i++ {
-    if i == 3 {
-        break
-    }
-    fmt.Println(i)
+	if i == 3 {
+		break
+	}
+	fmt.Println(i)
 }
 ```
 
@@ -122,10 +122,66 @@ Use the `continue` statement to skip the rest of the current iteration and conti
 
 ```go
 for i := 1; i <= 5; i++ {
-    if i == 3 {
-        continue
-    }
-    fmt.Println(i)
+	if i == 3 {
+		continue
+	}
+	fmt.Println(i)
+}
+```
+
+### Labelling Loops
+
+Go allows you to label loops and use those labels with `break` and `continue` statements to control the flow of your program
+
+- Labeled `break` and `continue` statements allow you to specify which loop you want to exit or continue
+- Useful when working with nested loops
+
+Example using labelled loop w/ `continue` statement
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+outer:
+	for i := 0; i < 5; i++ {
+		for j := 0; j < 5; j++ {
+			if i*j > 6 {
+				fmt.Println("Skipping iteration in outer loop")
+
+				// This will skip the current iteration of the outer loop, not just the inner loop.
+				continue outer
+			}
+			fmt.Printf("i = %d, j = %d\n", i, j)
+		}
+	}
+	fmt.Println("Exited loop")
+}
+```
+
+Example using labelled loop w/ `break` statement
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+// Label the outer for loop as "outer"
+outer:
+	for i := 0; i < 5; i++ {
+		for j := 0; j < 5; j++ {
+			if i*j > 6 {
+				fmt.Println("Breaking from inner loop")
+
+				// This will break the outer loop, not just the inner loop.
+				break outer
+			}
+			fmt.Printf("i = %d, j = %d\n", i, j)
+		}
+	}
+	fmt.Println("Exited loop")
 }
 ```
 
@@ -135,11 +191,11 @@ for i := 1; i <= 5; i++ {
 // ARRAYS
 numbers := [3]int{1, 2, 3}
 for i := 0; i < len(numbers); i++ {
-    fmt.Println(numbers[i])
+	fmt.Println(numbers[i])
 }
 
 for _, num := range numbers {
-    fmt.Println(num)
+	fmt.Println(num)
 }
 ```
 
@@ -147,11 +203,11 @@ for _, num := range numbers {
 // SLICES
 numbers := []int{1, 2, 3}
 for i := 0; i < len(numbers); i++ {
-    fmt.Println(numbers[i])
+	fmt.Println(numbers[i])
 }
 
 for _, num := range numbers {
-    fmt.Println(num)
+	fmt.Println(num)
 }
 ```
 
@@ -159,23 +215,23 @@ for _, num := range numbers {
 // STRINGS
 message := "Hello"
 for i := 0; i < len(message); i++ {
-    fmt.Println(message[i])
+	fmt.Println(message[i])
 }
 
 for _, char := range message {
-    fmt.Println(char)
+	fmt.Println(char)
 }
 ```
 
 ```go
 // MAPS
 ages := map[string]int{
-    "Alice": 25,
-    "Bob":   30,
+	"Alice": 25,
+	"Bob":   30,
 }
 
 for name, age := range ages {
-    fmt.Printf("%s is %d years old\n", name, age)
+	fmt.Printf("%s is %d years old\n", name, age)
 }
 ```
 
@@ -183,13 +239,13 @@ for name, age := range ages {
 // CHANNELS
 ch := make(chan int)
 go func() {
-    ch <- 1
-    ch <- 2
-    close(ch)
+	ch <- 1
+	ch <- 2
+	close(ch)
 }()
 
 for num := range ch {
-    fmt.Println(num)
+	fmt.Println(num)
 }
 ```
 
