@@ -118,15 +118,19 @@ A `thread` is the unit of execution within a `process`
 
 ## How does Go Handle Concurrency?
 
-### Goroutines
+### Goroutines (Concurrent Processes)
 
 [`Goroutines`](go_concurrency_goroutines.md)
 
-### Channels
+### Channels (Communication between Goroutines)
 
 [`Channels`](go_concurrency_channels.md)
 
-### Mutexes
+### WaitGroups (Synchronizing Goroutine Execution)
+
+[`WaitGroups`](go_concurrency_waitgroups.md)
+
+### Mutexes (Concurrent State Management)
 
 [`Mutexes`](go_concurrency_mutexes.md)
 
