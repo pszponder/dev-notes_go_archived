@@ -29,6 +29,7 @@ To create an `channel`, use the `make()` function, specifying the `chan` keyword
 - If you don't include a 2nd argument to `make()`, then the channel will be _unbuffered_
 - **NOTE:** Always _WRITE_ data before _READ_ when working with channels
 - **NOTE:** To avoid a `deadlock`, make sure you write to the channel at least as many times as you read from the channel. Reading from the channel more than you write to it results in a `deadlock`.
+- **NOTE:** An unbuffered channel will `block` when sending data until it is read from
 
 ```go
 // Create a new unbuffered channel
@@ -91,11 +92,133 @@ func main() {
 	ch <- "1st message"
 	ch <- "2nd message"
 
+	// Setup this anonymous function as a goroutine
+	// and send a 3rd message to the buffered channel
+	// Since buffered channel is size 2,
+	// Sending a 3rd piece of data to the channel
+	// causes the channel to block until
+	// something reads from the channel to unblock it
+	go func() { channel <- 3 }()
+
 	// Receive (READ) messages from the channel
 	fmt.Println(<-ch)
 	fmt.Println(<-ch)
 }
 ```
+
+## Blocked Channels
+
+When we say a channel operation (send or receive) is "blocked", it means that the goroutine which is trying to perform the operation cannot proceed until certain conditions are met. The operation itself is paused, and the goroutine becomes inactive in the context of that operation.
+
+1. **Blocking on Send**: When the buffer is full for a buffered channel (or when there's no ready receiver for an unbuffered channel), sends will block.
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	// Since buffered channel is of size 2,
+	// when 2 messages are sent,
+	// you can't pass any more messages into the channel
+	// unless you 1st start reading from it first
+	ch := make(chan int, 2)
+
+	// Producer Goroutine
+	go func() {
+		for i := 0; i < 4; i++ {
+			fmt.Println("Sending:", i)
+			ch <- i // Write to channel
+			time.Sleep(time.Second) // Pause for a second
+		}
+	}()
+
+	// Receiver / Consumer Goroutine
+	go func() {
+		// Wait for a while before starting to receive
+		time.Sleep(5 * time.Second)
+		for i := 0; i < 4; i++ {
+			fmt.Println("Received:", <-ch) // Read from channel
+		}
+	}()
+
+	time.Sleep(10 * time.Second) // Let goroutines complete
+}
+```
+
+In the above code, the send goroutine tries to send four items. The first two won't block since the channel's buffer can accommodate them. The third will block because there's no space left in the buffer and no receiver yet. After a delay, the receiving goroutine starts taking items, unblocking sends.
+
+2. **Blocking on Receive**: When the channel is empty (and no sender is ready for unbuffered channels), receives will block.
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	ch := make(chan int, 2)
+
+	// Producer Goroutine
+	go func() {
+		time.Sleep(5 * time.Second) // Wait before sending
+		for i := 0; i < 4; i++ {
+			fmt.Println("Sending:", i)
+			ch <- i
+		}
+	}()
+
+	// Receiver / Consumer Goroutine
+	go func() {
+		for i := 0; i < 4; i++ {
+			// Receiving is blocked until producer
+			// starts sending data to channel
+			fmt.Println("Received:", <-ch)
+			time.Sleep(time.Second) // Pause for a second
+		}
+	}()
+
+	time.Sleep(10 * time.Second) // Let goroutines complete
+}
+```
+
+Here, the receiving goroutine starts first and tries to take four items. But the channel is empty, so it'll block. After a delay, the sending goroutine starts sending items, unblocking the receives.
+
+3. **Receive on a Closed Channel**:
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	ch := make(chan int, 2)
+
+	ch <- 1
+	ch <- 2
+	close(ch)
+
+	for i := 0; i < 4; i++ {
+		val, ok := <-ch
+		if ok {
+			fmt.Println("Received:", val)
+		} else {
+			fmt.Println("Channel is closed!")
+		}
+	}
+}
+```
+
+In this example, we send two items and then close the channel. We then try to receive four items. The first two receives get the values, but the subsequent receives immediately return the zero value (`0` for `int` in this case) and a `false` indicating the channel is closed.
+
+Remember that the behavior might slightly differ each time you run, due to the nature of concurrent operations, but the blocking principles hold true.
 
 ## When to use Unbuffered vs Buffered Channels
 
@@ -331,7 +454,7 @@ func consumer(ch chan string, wg *sync.WaitGroup) {
 
 ## Multi-Channel Control Flow w/ the select statement
 
-The `select` statement in Go is used to wait on multiple communication operations (channels)
+The `select` statement in Go is used to wait on multiple, potentially blocking, channels
 
 - Allows a goroutine to wait on multiple communication operations
 - Will block until one of the communication operations can proceed
