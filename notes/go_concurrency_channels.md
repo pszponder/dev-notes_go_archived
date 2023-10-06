@@ -220,6 +220,72 @@ In this example, we send two items and then close the channel. We then try to re
 
 Remember that the behavior might slightly differ each time you run, due to the nature of concurrent operations, but the blocking principles hold true.
 
+## Channels as Function Parameters
+
+When declaring channels as [function](go_functions.md) parameters, you can specify whether they're send-only or receive-only.
+
+This can help enhance the type safety of your programs by ensuring that a channel is used only in the intended way.
+
+1. **Receive-Only Channel**:
+   If you want a channel to be receive-only (i.e., you can only read from it), you can declare it as:
+
+```go
+func myFunc(ch <-chan int) {
+		value := <-ch
+		// ... rest of the code
+}
+```
+
+2. **Send-Only Channel**:
+   If you want a channel to be send-only (i.e., you can only write to it), you can declare it as:
+
+```go
+func myFunc(ch chan<- int) {
+		ch <- 42
+		// ... rest of the code
+}
+```
+
+Example of using both in a simple program:
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+// Can only send values to the `ch` parameter
+func sendData(ch chan<- int) {
+	for i := 0; i < 5; i++ {
+		ch <- i
+		time.Sleep(time.Second)
+	}
+	close(ch)
+}
+
+// Can only read values from the `ch` parameter
+func receiveData(ch <-chan int) {
+	for v := range ch {
+		fmt.Println(v)
+	}
+}
+
+func main() {
+	ch := make(chan int)
+	go sendData(ch)
+	receiveData(ch)
+}
+```
+
+In the example above:
+
+- The `sendData` function can only send values to the `ch` channel.
+- The `receiveData` function can only receive values from the `ch` channel.
+
+Using this feature ensures that the channels are used in the correct context and can help avoid potential programming errors.
+
 ## When to use Unbuffered vs Buffered Channels
 
 ### Using an Unbuffered Channel

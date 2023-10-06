@@ -5,12 +5,18 @@
 `Mutex`es are used for managing state concurrently.
 
 - A `mutex` ensures that only one [goroutine](go_concurrency_goroutines.md) has access to a particular piece of state at a time.
+- Short for `mutual exclusion`
+- Provides a way to `lock` and `unlock` data
+  - Locked data cannot be accessed by any other goroutine until it is unlocked
+  - While locked, other goroutines are `blocked` until the mutex is unlocked
+  - Execution waits until a `lock` is acquired, or if [select](go_concurrency_channels.md#multi-channel-control-flow-w-the-select-statement) is used, will skip and try again later
 - Crucial when multiple goroutines are accessing and modifying shared data, as it prevents race conditions and ensures data consistency.
 - **NOTE:** Mutexes are not necessarily tied to a piece of state, instead, they are used to ensure that a section of code that accesses the piece of state is executed by only one goroutine at a time.
 
 ## Mutex Best Practices
 
 - A mutex variable should be prefixed with `mu`
+- Use the [`defer`](go_functions.md#deferring-function-execution-w-defer-keyword) keyword to ensure that the mutex gets unlocked
 
 ## How to use a Mutex
 
@@ -19,6 +25,46 @@
 3. Use the `Lock()` method to lock the mutex before accessing a shared resource
 4. Use the `Unlock()` method to unlock the mutex after accessing the shared resource
    1. Can use the [`defer`](go_functions.md#deferring-function-execution-w-defer-keyword) keyword to invoke the unlock function right before the parent function completes.
+
+Example of using a mutex
+
+```go
+import "sync"
+
+type SyncedData struct {
+	inner map[string]int
+	mutex sync.Mutex
+}
+
+// Define a method on the SyncedData struct
+// to insert data into and instance of the struct
+func (d *SyncedData) Insert(k string, v int) {
+	d.mutex.Lock()         // Obtain a lock on the mutex
+	defer d.mutex.Unlock() // Unlock the mutex at the end of func
+	d.inner[k] = v         // Add a new key-value pair
+}
+
+// Define a method on the SyncedData struct
+// to retrieve a value from the struct
+func (d *SyncedData) Get(k string) int {
+	d.mutex.Lock()         // Obtain a lock on the mutex
+	defer d.mutex.Unlock() // Unlock the mutex at the end of func
+	return d.inner[k]      // Retrieve value from struct
+}
+
+func main() {
+	// Declare SyncedData struct w/ default values
+	data := SyncedData{inner: map[string]int}
+
+	// Invoke Insert Method
+	data.Insert("hello", 1)
+	data.Insert("world", 2)
+
+	// Invoke Get Method
+	fmt.Println(data.Get("hello"))
+	fmt.Println(data.Get("world"))
+}
+```
 
 Example of using a mutex to manage state concurrent incrementing of a counter state variable.
 

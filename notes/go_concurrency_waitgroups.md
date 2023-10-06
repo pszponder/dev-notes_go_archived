@@ -4,6 +4,9 @@
 
 `WaitGroups` are synchronization primitives from the `sync` package used for waiting for a collection of [goroutines](go_concurrency_goroutines.md) to finish executing.
 
+- Enable an application to wait for goroutines to finish
+- Operates by incrementing a counter whenever a goroutine is added, and decremented when it finished
+  - Waiting on a WaitGroup will block execution until the counter is 0
 - Useful in concurrent programs, where you need to ensure that all goroutines complete their execution before proceeding.
 - `WaitGroup` allows you to easily coordinate and wait for the completion of multiple goroutines in a concurrent Go program
 
@@ -19,6 +22,35 @@
 3. `Wait()`
    1. Blocks the calling goroutine until the `WaitGroup` counter is decremented to `0`
    2. Typically used in the `main` function (or the spawning goroutine) to block until all spawned goroutines have called `Done()`, indicating they have finished execution
+
+```go
+import (
+	"fmt"
+	"sync"
+)
+
+func main() {
+	var wg sync.WaitGroup // Declare a WaitGroup.
+
+	sum := 0
+
+	// Spawn multiple goroutines using a for loop
+	for i := 0; i < 20; i++ {
+		wg.Add(1) // Increment wg counter by 1 for each spawned goroutine
+		value := i
+
+		// Spawn a new goroutine
+		go func() {
+			defer wg.Done() // decrement wg counter by 1 when func completes
+			sum += value
+		}()
+	}
+
+	wg.Wait() // Block until wg counter goes to zero
+
+	fmt.Println("sum is:", sum)
+}
+```
 
 ```go
 package main
